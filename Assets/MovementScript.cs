@@ -20,7 +20,6 @@ public class MovementScript : MonoBehaviour
     public float wallJumpingCounter;
     public float wallJumpingDuration = 0.4f;
 
-
     public Vector2 movementDirection;
     public Vector2 previousPosition;
     public Vector3 rawMovement;
@@ -37,10 +36,12 @@ public class MovementScript : MonoBehaviour
     public bool isGrounded;
     public bool isWallSliding;
     public bool isWallJumping;
+    public bool isWallJumpDoubleJump;
 
     public Vector2 gravity;
 
     public int jumpCount;
+    public int wallJumpCount;
 
     private void Start()
     {
@@ -87,6 +88,7 @@ public class MovementScript : MonoBehaviour
         if (isGrounded)
         {
             jumpCount = 0;
+            wallJumpCount = 0;
             doubleJump = true;
         }
 
@@ -150,7 +152,8 @@ public class MovementScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && wallJumpingCounter > 0f)
         {
             isWallJumping = true;
-            rb2d.velocity = new Vector2 (wallJumpingDir * wallJumpingPower.x, wallJumpingPower.y);
+            rb2d.velocity = new Vector2(wallJumpingDir * wallJumpingPower.x, wallJumpingPower.y);
+            wallJumpCount++;
             wallJumpingCounter = 0f;
 
             if (transform.localScale.x != wallJumpingDir)
@@ -160,7 +163,6 @@ public class MovementScript : MonoBehaviour
                 localscale.x *= -1f;
                 transform.localScale = localscale;
             }
-
             Invoke(nameof(StopWallJump), wallJumpingDuration);
         }
     }

@@ -34,7 +34,6 @@ public class EnemyScript : MonoBehaviour
         if (collision.transform.CompareTag("Wall"))
         {
             movementSpeed = -movementSpeed;
-            Debug.Log("Hit");
         }
     }
     public void StopMovement()

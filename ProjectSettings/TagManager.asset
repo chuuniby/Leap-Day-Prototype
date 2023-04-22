@@ -10,6 +10,7 @@ TagManager:
   - HealthPack
   - Spike
   - Coin
+  - Platform
   layers:
   - Default
   - TransparentFX

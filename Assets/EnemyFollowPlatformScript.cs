@@ -51,12 +51,15 @@ public class EnemyFollowPlatformScript : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        platformCollider = collision.gameObject.GetComponent<BoxCollider2D>();
-        var size = platformCollider.size * 0.5f;
-        var mtx = Matrix4x4.TRS(platformCollider.bounds.center, platformCollider.transform.localRotation, platformCollider.transform.localScale);
-        verts[0] = mtx.MultiplyPoint3x4(new Vector3(-size.x, size.y)) + new Vector3(-offset, offset); //top left
-        verts[1] = mtx.MultiplyPoint3x4(new Vector3(size.x, size.y)) + new Vector3(offset, offset); //top right
-        verts[2] = mtx.MultiplyPoint3x4(new Vector3(size.x, -size.y)) + new Vector3(offset, -offset); //bottom right
-        verts[3] = mtx.MultiplyPoint3x4(new Vector3(-size.x, -size.y)) + new Vector3(-offset, -offset); //bottom left
+        if(collision.transform.CompareTag("LevelSeperation") && collision.transform.CompareTag("Platform"))
+        {
+            platformCollider = collision.gameObject.GetComponent<BoxCollider2D>();
+            var size = platformCollider.size * 0.5f;
+            var mtx = Matrix4x4.TRS(platformCollider.bounds.center, platformCollider.transform.localRotation, platformCollider.transform.localScale);
+            verts[0] = mtx.MultiplyPoint3x4(new Vector3(-size.x, size.y)) + new Vector3(-offset, offset); //top left
+            verts[1] = mtx.MultiplyPoint3x4(new Vector3(size.x, size.y)) + new Vector3(offset, offset); //top right
+            verts[2] = mtx.MultiplyPoint3x4(new Vector3(size.x, -size.y)) + new Vector3(offset, -offset); //bottom right
+            verts[3] = mtx.MultiplyPoint3x4(new Vector3(-size.x, -size.y)) + new Vector3(-offset, -offset); //bottom left
+        }
     }
 }
