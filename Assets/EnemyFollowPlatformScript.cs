@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyFollowPlatformScript : MonoBehaviour
 {
-    public float movementSpeed = 2f;
+    public float movementSpeed = 1f;
     public Rigidbody2D rb;
     public BoxCollider2D platformCollider;
     public bool isFacingRight;
@@ -12,19 +12,21 @@ public class EnemyFollowPlatformScript : MonoBehaviour
 
     Vector3[] verts = new Vector3[4];
     public int nextWayPoint = 1;
-    public float distToPoint;
     public int index = 1;
+    public float distToPoint;
+    public float offset;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         isFacingRight = true;
-        
+        enemyDirection = transform.eulerAngles.z;
     }
     private void Update()
     {
-        rb.velocity = new Vector2(movementSpeed, 0f);
-        enemyDirection = transform.localEulerAngles.z;
+        transform.rotation = Quaternion.Euler(transform.rotation.x,transform.rotation.y,enemyDirection);
+        transform.position += transform.right * movementSpeed * Time.deltaTime;
+
         //Move();
 
         if (platformCollider != null)
@@ -33,22 +35,27 @@ public class EnemyFollowPlatformScript : MonoBehaviour
             //if(Physics.Raycast(transform.position,transform.TransformDirection()))
             Debug.Log(index);
             Debug.Log(Vector3.Distance(transform.position, verts[index]));
-            if (Vector3.Distance(transform.position, verts[index]) < 0.2f)
+
+            if (Vector3.Distance(transform.position, verts[index]) < 0.3f)
             {
-                
+                enemyDirection -= 90f;
                 index++;
-                movementSpeed = 0f;
+                //movementSpeed = 0f;
+
+            }
+            else
+            {
+                //rb.AddForce(transform.right * movementSpeed);
                 Vector2.MoveTowards(transform.position, verts[index], movementSpeed * Time.deltaTime);
-                //enemyDirection -= 90f;
             }
             if (index >= verts.Length)
             {
                 index = 0;
             }
-            //if(enemyDirection <= -360f)
-            //{
-            //    enemyDirection = 0f;
-            //}
+            if (enemyDirection <= -360f)
+            {
+                enemyDirection = 0f;
+            }
         }
     }
 
