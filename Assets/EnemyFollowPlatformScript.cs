@@ -51,7 +51,7 @@ public class EnemyFollowPlatformScript : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.transform.CompareTag("LevelSeperation") && collision.transform.CompareTag("Platform"))
+        if(collision.transform.CompareTag("LevelSeperation") || collision.transform.CompareTag("Platform"))
         {
             platformCollider = collision.gameObject.GetComponent<BoxCollider2D>();
             var size = platformCollider.size * 0.5f;

@@ -42,7 +42,6 @@ public class MovementScript : MonoBehaviour
 
     public int jumpCount;
     public int wallJumpCount;
-
     private void Start()
     {
         gravity = new Vector2(0f, -Physics2D.gravity.y);
@@ -54,6 +53,7 @@ public class MovementScript : MonoBehaviour
         wallSlidingSpeed = 0.5f;
     }
 
+#if UNITY_STANDALONE_WIN
     private void FixedUpdate()
     {
         rawMovement = new Vector3(movementSpeed, 0f);
@@ -71,8 +71,8 @@ public class MovementScript : MonoBehaviour
             if (isGrounded)
             {
                 rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
-                jumpCount++;
                 rb2d.AddForce(Vector2.up * jumpForce);
+                jumpCount++;
             }
             else
             {
@@ -153,7 +153,6 @@ public class MovementScript : MonoBehaviour
         {
             isWallJumping = true;
             rb2d.velocity = new Vector2(wallJumpingDir * wallJumpingPower.x, wallJumpingPower.y);
-            wallJumpCount++;
             wallJumpingCounter = 0f;
 
             if (transform.localScale.x != wallJumpingDir)
@@ -165,6 +164,13 @@ public class MovementScript : MonoBehaviour
             }
             Invoke(nameof(StopWallJump), wallJumpingDuration);
         }
+
+        if (isWallJumping && Input.GetKeyDown(KeyCode.Space))
+        {
+            rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
+            rb2d.AddForce(Vector2.up * jumpForce);
+            wallJumpCount++;
+        }
     }
 
     public void StopWallJump()
@@ -173,3 +179,10 @@ public class MovementScript : MonoBehaviour
     }
 }
 
+#endif
+
+#if UNITY_ANDROID
+
+//smth
+
+#endif

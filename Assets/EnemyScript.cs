@@ -13,6 +13,7 @@ public class EnemyScript : MonoBehaviour
 
     public bool isMoving;
 
+    public BoxCollider2D[] hitBoxes;
 
     private void Awake()
     {
@@ -34,6 +35,9 @@ public class EnemyScript : MonoBehaviour
         if (collision.transform.CompareTag("Wall"))
         {
             movementSpeed = -movementSpeed;
+            Vector3 localscale = transform.localScale;
+            localscale.x *= -1f;
+            transform.localScale = localscale;
         }
     }
     public void StopMovement()
