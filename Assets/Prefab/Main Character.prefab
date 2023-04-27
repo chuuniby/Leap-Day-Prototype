@@ -304,8 +304,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb2d: {fileID: 7600245104401257343}
-  leftWall: {fileID: 0}
-  rightWall: {fileID: 0}
   cam: {fileID: 0}
   movementSpeed: 4
   movementUp: 0

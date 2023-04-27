@@ -4,13 +4,12 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEditor;
 
 public class MovementScript : MonoBehaviour
 {
     public Rigidbody2D rb2d;
-    public GameObject leftWall;
-    public GameObject rightWall;
-    public Camera cam;
+    public GameObject cam;
 
     public float movementSpeed;
     public float movementUp;
@@ -47,7 +46,7 @@ public class MovementScript : MonoBehaviour
     private void Start()
     {
         gravity = new Vector2(0f, -Physics2D.gravity.y);
-        movementSpeed = 4f;
+        movementSpeed = 20f;
         movementUp = 0f;
         jumpForce = 1500f;
         fallMultiplier = 2.5f;
@@ -61,8 +60,8 @@ public class MovementScript : MonoBehaviour
         rawMovement = new Vector3(movementSpeed, 0f);
         transform.position += rawMovement * Time.deltaTime;
 
-        cam.gameObject.transform.position = Vector3.Lerp(new Vector3(cam.transform.position.x, cam.transform.position.y, -1f),
-            new Vector3(cam.transform.position.x, transform.position.y, -1f), 2f);
+        cam.transform.position = Vector3.Lerp(new Vector3(cam.transform.position.x, cam.transform.position.y, -1f),
+            new Vector3(cam.transform.position.x, transform.position.y, -1f), 2f*Time.deltaTime);
     }
 
 #if UNITY_STANDALONE_WIN
