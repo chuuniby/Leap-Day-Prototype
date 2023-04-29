@@ -60,8 +60,8 @@ public class MovementScript : MonoBehaviour
         rawMovement = new Vector3(movementSpeed, 0f);
         transform.position += rawMovement * Time.deltaTime;
 
-        cam.transform.position = Vector3.Lerp(new Vector3(cam.transform.position.x, cam.transform.position.y, -1f),
-            new Vector3(cam.transform.position.x, transform.position.y, -1f), 2f*Time.deltaTime);
+        cam.transform.position = Vector3.Lerp(new Vector3(cam.transform.position.x, cam.transform.position.y, -18f),
+            new Vector3(cam.transform.position.x, transform.position.y, -18f), 2f*Time.deltaTime);
     }
 
 #if UNITY_STANDALONE_WIN
