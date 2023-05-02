@@ -46,12 +46,13 @@ public class MovementScript : MonoBehaviour
     private void Start()
     {
         gravity = new Vector2(0f, -Physics2D.gravity.y);
-        movementSpeed = 20f;
+        movementSpeed = 15f;
         movementUp = 0f;
         jumpForce = 1500f;
         fallMultiplier = 2.5f;
         movingRight = true;
         wallSlidingSpeed = 2f;
+        cam = GameObject.FindGameObjectWithTag("MainCamera");
     }
 
 
@@ -61,7 +62,7 @@ public class MovementScript : MonoBehaviour
         transform.position += rawMovement * Time.deltaTime;
 
         cam.transform.position = Vector3.Lerp(new Vector3(cam.transform.position.x, cam.transform.position.y, -18f),
-            new Vector3(cam.transform.position.x, transform.position.y, -18f), 2f*Time.deltaTime);
+            new Vector3(cam.transform.position.x, transform.position.y, -18f), 2f * Time.deltaTime);
     }
 
 #if UNITY_STANDALONE_WIN
@@ -79,7 +80,7 @@ public class MovementScript : MonoBehaviour
             }
             else
             {
-                if (doubleJump)
+                if (doubleJump && !isWallSliding)
                 {
                     doubleJump = false;
                     rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
@@ -197,14 +198,14 @@ public class MovementScript : MonoBehaviour
     private void Update()
     {
         text.text = direction;
-        if(Input.touchCount > 0)
+        if (Input.touchCount > 0)
         {
             theTouch = Input.GetTouch(0);
-            if(theTouch.phase == TouchPhase.Began)
+            if (theTouch.phase == TouchPhase.Began)
             {
                 touchStartPosition = theTouch.position;
             }
-            else if(theTouch.phase == TouchPhase.Moved || theTouch.phase == TouchPhase.Ended)
+            else if (theTouch.phase == TouchPhase.Moved || theTouch.phase == TouchPhase.Ended)
             {
                 touchEndPosition = theTouch.position;
             }
@@ -213,7 +214,7 @@ public class MovementScript : MonoBehaviour
                 timeTouchEnded = Time.time;
             }
             x = touchEndPosition.x -= touchStartPosition.x;
-            y = touchEndPosition .y - touchStartPosition.y;
+            y = touchEndPosition.y - touchStartPosition.y;
 
             if (Mathf.Abs(x) == 0 && Mathf.Abs(y) == 0)
             {
@@ -232,7 +233,7 @@ public class MovementScript : MonoBehaviour
             }
             else
             {
-                if(y > 0)
+                if (y > 0)
                 {
                     direction = "Up";
                 }
@@ -242,7 +243,7 @@ public class MovementScript : MonoBehaviour
                 }
             }
         }
-        else if(Time.time - timeTouchEnded > displayTime)
+        else if (Time.time - timeTouchEnded > displayTime)
         {
             //do smth
         }
@@ -253,61 +254,64 @@ public class MovementScript : MonoBehaviour
 
         isGrounded = Physics2D.OverlapCapsule(groundCheck.position, new Vector2(0.4f, 0.1f), CapsuleDirection2D.Horizontal, 0, groundLayer);
         isWallSliding = Physics2D.OverlapCapsule(wallCheck.position, new Vector2(0.2f, 0.1f), CapsuleDirection2D.Vertical, 0, wallLayer);
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.touchCount > 0)
         {
+            if (Mathf.Abs(x) == 0 && Mathf.Abs(y) == 0)
+            {
+                if (isGrounded)
+                {
+                    rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
+                    rb2d.AddForce(Vector2.up * jumpForce);
+                    jumpCount++;
+                }
+                else
+                {
+                    if (doubleJump)
+                    {
+                        doubleJump = false;
+                        rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
+                        rb2d.AddForce(Vector2.up * jumpForce);
+                    }
+                }
+            }
+
             if (isGrounded)
             {
-                rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
-                rb2d.AddForce(Vector2.up * jumpForce);
-                jumpCount++;
+                jumpCount = 0;
+                wallJumpCount = 0;
+                doubleJump = true;
+            }
+
+            if (jumpCount == 2)
+            {
+                doubleJump = false;
+            }
+
+            if (rb2d.velocity.y < 0f)
+            {
+                rb2d.velocity -= fallMultiplier * Time.deltaTime * gravity;
+            }
+
+            if (!isGrounded && isWallSliding)
+            {
+                movementSpeed = 0f;
+                rb2d.velocity = new Vector2(movementSpeed, Mathf.Clamp(rb2d.velocity.y, -wallSlidingSpeed, float.MaxValue));
             }
             else
             {
-                if (doubleJump)
+                if (movingRight)
                 {
-                    doubleJump = false;
-                    rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
-                    rb2d.AddForce(Vector2.up * jumpForce);
+                    movementSpeed = 4f;
+                }
+                if (!movingRight)
+                {
+                    movementSpeed = -4f;
                 }
             }
-        }
 
-        if (isGrounded)
-        {
-            jumpCount = 0;
-            wallJumpCount = 0;
-            doubleJump = true;
-        }
+            wallJump();
 
-        if (jumpCount == 2)
-        {
-            doubleJump = false;
         }
-
-        if (rb2d.velocity.y < 0f)
-        {
-            rb2d.velocity -= fallMultiplier * Time.deltaTime * gravity;
-        }
-
-        if (!isGrounded && isWallSliding)
-        {
-            movementSpeed = 0f;
-            rb2d.velocity = new Vector2(movementSpeed, Mathf.Clamp(rb2d.velocity.y, -wallSlidingSpeed, float.MaxValue));
-        }
-        else
-        {
-            if (movingRight)
-            {
-                movementSpeed = 4f;
-            }
-            if (!movingRight)
-            {
-                movementSpeed = -4f;
-            }
-        }
-
-        wallJump();
-
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -336,7 +340,7 @@ public class MovementScript : MonoBehaviour
             wallJumpingCounter -= Time.deltaTime;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && wallJumpingCounter > 0f)
+        if ((Mathf.Abs(x) == 0 && Mathf.Abs(y) == 0) && wallJumpingCounter > 0f)
         {
             isWallJumping = true;
             rb2d.velocity = new Vector2(wallJumpingDir * wallJumpingPower.x, wallJumpingPower.y);
@@ -352,7 +356,7 @@ public class MovementScript : MonoBehaviour
             Invoke(nameof(StopWallJump), wallJumpingDuration);
         }
 
-        if (isWallJumping && Input.GetKeyDown(KeyCode.Space))
+        if (isWallJumping && (Mathf.Abs(x) == 0 && Mathf.Abs(y) == 0))
         {
             rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
             rb2d.AddForce(Vector2.up * jumpForce);
