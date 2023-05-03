@@ -6,11 +6,12 @@ TagManager:
   tags:
   - Wall
   - LevelSeperation
-  - Level Seperation
   - HealthPack
   - Spike
   - Coin
   - Platform
+  - EnemyBullet
+  - Enemy
   layers:
   - Default
   - TransparentFX

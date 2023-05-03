@@ -21,7 +21,7 @@ public class EnemyFollowPlatformScript : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         isFacingRight = true;
         enemyDirection = transform.eulerAngles.z;
-        offset = 0.25f;
+        offset = 0.8f; //offset = half  the scale
     }
     private void Update()
     {
@@ -29,7 +29,7 @@ public class EnemyFollowPlatformScript : MonoBehaviour
         transform.position += transform.right * movementSpeed * Time.deltaTime;
         if (platformCollider != null)
         {
-            if (Vector3.Distance(transform.position, verts[index]) < 0.03f)
+            if (Vector3.Distance(transform.position, verts[index]) < 0.05f)
             {
                 enemyDirection -= 90f;
                 index++;

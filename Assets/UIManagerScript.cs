@@ -8,7 +8,6 @@ public class UIManagerScript : MonoBehaviour
 {
     public TextMeshProUGUI hpText;
     public TextMeshProUGUI coinText;
-    public PlayerScript playerScript;
     void Start()
     {
         
@@ -17,7 +16,7 @@ public class UIManagerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        hpText.text = "HP: " + playerScript.hp.ToString();
-        coinText.text = "Coin: " + playerScript.coin.ToString();
+        hpText.text = "HP: " + PlayerScript.playerScriptStatic.hp.ToString();
+        coinText.text = "Coin: " + PlayerScript.playerScriptStatic.coin.ToString();
     }
 }

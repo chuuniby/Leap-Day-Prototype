@@ -20,6 +20,7 @@ public class MovementScript : MonoBehaviour
     public float wallJumpingTime = 0.2f;
     public float wallJumpingCounter;
     public float wallJumpingDuration = 0.4f;
+    public float offset = 4.5f;
 
     public Vector2 movementDirection;
     public Vector2 previousPosition;
@@ -46,9 +47,9 @@ public class MovementScript : MonoBehaviour
     private void Start()
     {
         gravity = new Vector2(0f, -Physics2D.gravity.y);
-        movementSpeed = 15f;
+        movementSpeed = 7f;
         movementUp = 0f;
-        jumpForce = 1500f;
+        jumpForce = 1250f;
         fallMultiplier = 2.5f;
         movingRight = true;
         wallSlidingSpeed = 2f;
@@ -62,7 +63,7 @@ public class MovementScript : MonoBehaviour
         transform.position += rawMovement * Time.deltaTime;
 
         cam.transform.position = Vector3.Lerp(new Vector3(cam.transform.position.x, cam.transform.position.y, -18f),
-            new Vector3(cam.transform.position.x, transform.position.y, -18f), 2f * Time.deltaTime);
+            new Vector3(cam.transform.position.x, transform.position.y + offset, -18f), 2f * Time.deltaTime);
     }
 
 #if UNITY_STANDALONE_WIN
@@ -115,11 +116,11 @@ public class MovementScript : MonoBehaviour
         {
             if (movingRight)
             {
-                movementSpeed = 4f;
+                movementSpeed = 7f;
             }
             if (!movingRight)
             {
-                movementSpeed = -4f;
+                movementSpeed = -7f;
             }
         }
 
@@ -145,7 +146,7 @@ public class MovementScript : MonoBehaviour
             isWallJumping = false;
             wallJumpingDir = -transform.localScale.x;
             wallJumpingCounter = wallJumpingTime;
-
+            wallJumpCount = 0;
             CancelInvoke(nameof(StopWallJump));
         }
         else
@@ -301,11 +302,11 @@ public class MovementScript : MonoBehaviour
             {
                 if (movingRight)
                 {
-                    movementSpeed = 4f;
+                    movementSpeed = 7f;
                 }
                 if (!movingRight)
                 {
-                    movementSpeed = -4f;
+                    movementSpeed = -7f;
                 }
             }
 
