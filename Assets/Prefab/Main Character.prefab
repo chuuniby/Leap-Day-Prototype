@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4883474}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: WallCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 328226554}
   - component: {fileID: 328226556}
   - component: {fileID: 328226555}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: FreezeRadius
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -141,7 +141,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 860209598}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -173,7 +173,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1798412933}
   - component: {fileID: 1798412934}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -261,7 +261,9 @@ GameObject:
   - component: {fileID: 7600245104401257346}
   - component: {fileID: 7600245104401257342}
   - component: {fileID: 7600245104401257351}
-  m_Layer: 0
+  - component: {fileID: 7600245104401257357}
+  - component: {fileID: 7600245104401257364}
+  m_Layer: 3
   m_Name: Main Character
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -436,3 +438,36 @@ MonoBehaviour:
   hp: 0
   coin: 0
   hpMax: 0
+--- !u!114 &7600245104401257357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6535992159967999611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e9b416d1ad538488dc183331c10bd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 6535992159967999611}
+  gizmoLine: {fileID: 2437259328593140287, guid: 0149cbf4966a9c4458c8702ce40c92b0, type: 3}
+  _gizmoLine: {fileID: 0}
+  drawPosition: {fileID: 1798412933}
+--- !u!114 &7600245104401257364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6535992159967999611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ba6f882bbad74a49b23843c46ba0d0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemies: []
+  enemy: {fileID: 0}
+  distances: []
+  distance: 0
+  minDistance: 0

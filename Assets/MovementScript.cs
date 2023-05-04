@@ -198,7 +198,7 @@ public class MovementScript : MonoBehaviour
     public TextMeshProUGUI text;
     private void Update()
     {
-        text.text = direction;
+        //text.text = direction;
         if (Input.touchCount > 0)
         {
             theTouch = Input.GetTouch(0);
