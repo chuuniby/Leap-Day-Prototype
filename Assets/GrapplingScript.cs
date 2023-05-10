@@ -42,6 +42,9 @@ public class GrapplingScript : MonoBehaviour
                 }
             }
         }
+
+        if(canGrapple)
+        player.transform.position = Vector3.Lerp(transform.position, hit.point, Time.deltaTime*4f);
     }
 
     public void DrawGizmos()
@@ -66,10 +69,18 @@ public class GrapplingScript : MonoBehaviour
         else
         {
             //grapple
+            Debug.Log(hit.point);
             player.GetComponent<MovementScript>().movementSpeed = 0f;
-            player.transform.position += Vector3.MoveTowards(transform.position, hit.point, 100f) * Time.deltaTime* 15f;
-            canGrapple = false;
             Destroy(_gizmoLine);
+            canGrapple = false;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.transform.CompareTag("Platform"))
+        {
+            canGrapple = false;
         }
     }
 }
