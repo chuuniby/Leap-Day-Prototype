@@ -25,7 +25,7 @@ public class PlayerScript : MonoBehaviour
         if (hp <= 0)
         {
             hp = 0;
-            //respawn or smth
+            LevelResetManager.instance.reset = true;
         }
         if (hp > hpMax)
         {
@@ -38,6 +38,7 @@ public class PlayerScript : MonoBehaviour
         if (collision.transform.CompareTag("Spike"))
         {
             hp -= 1;
+            transform.position = LevelResetManager.instance.respawnPoint;
         }
         if (collision.transform.CompareTag("Coin"))
         {
@@ -47,11 +48,13 @@ public class PlayerScript : MonoBehaviour
         if (collision.transform.CompareTag("EnemyBullet"))
         {
             hp -= 1;
+            transform.position = LevelResetManager.instance.respawnPoint;
         }
         if (collision.transform.CompareTag("HealthPack"))
         {
             hp += 1;
             Destroy(collision.gameObject);
+            transform.position = LevelResetManager.instance.respawnPoint;
         }
     }
 
@@ -60,6 +63,7 @@ public class PlayerScript : MonoBehaviour
         if (collision.transform.CompareTag("Enemy"))
         {
             hp -= 1;
+            transform.position = LevelResetManager.instance.respawnPoint;
         }
     }
 }

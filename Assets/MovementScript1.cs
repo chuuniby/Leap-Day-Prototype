@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEditor;
+using Mono.Cecil.Cil;
 
 public class MovementScript1 : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class MovementScript1 : MonoBehaviour
     public LayerMask wallLayer;
 
     public bool movingRight;
+    public bool isJumping;
     public bool doubleJump;
     public bool isGrounded;
     public bool isWallSliding;
@@ -43,7 +45,12 @@ public class MovementScript1 : MonoBehaviour
     public Vector2 gravity;
 
     public int jumpCount;
-    public int wallJumpCount;
+
+    private void Awake()
+    {
+        rb2d = GetComponent<Rigidbody2D>();
+        cam = GameObject.FindGameObjectWithTag("MainCamera");
+    }
     private void Start()
     {
         gravity = new Vector2(0f, -Physics2D.gravity.y);
@@ -53,34 +60,29 @@ public class MovementScript1 : MonoBehaviour
         fallMultiplier = 2.5f;
         movingRight = true;
         wallSlidingSpeed = 2f;
-        cam = GameObject.FindGameObjectWithTag("MainCamera");
     }
 #if UNITY_STANDALONE_WIN
     private void Update()
     {
-        cam.transform.position = Vector3.Lerp(new Vector3(cam.transform.position.x, cam.transform.position.y, -18f),
-            new Vector3(cam.transform.position.x, transform.position.y + offset, -18f), 2f * Time.deltaTime); //CameraLerp
-
         MovementCalculation();
-        
-        isGrounded = Physics2D.OverlapCapsule(groundCheck.position, new Vector2(0.4f, 0.1f), CapsuleDirection2D.Horizontal, 0, groundLayer);
-        isWallSliding = Physics2D.OverlapCapsule(wallCheck.position, new Vector2(0.2f, 0.1f), CapsuleDirection2D.Vertical, 0, wallLayer);
-
-        if (Input.GetKeyDown(KeyCode.Space))                            
+        GroundCheck();
+        WallCheck();
+        CameraLerp();
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (isGrounded)                                             //if player is on the ground and press space
+            if (isGrounded)
             {
-                rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);       //set vertical velocity to 0
-                rb2d.AddForce(Vector2.up * jumpForce);                  //Add vertical force to player
-                jumpCount++;                                            //track how many jump have player jump
+                IsJumping();
             }
-            else                                                        //if Player is not on the ground
+            else
             {
-                if (doubleJump && !isWallSliding)                       //if player can double jump and is not wallSliding and press space
+                if(doubleJump)
                 {
-                    rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);   //set vertical velocity to 0
-                    rb2d.AddForce(Vector2.up * jumpForce);              //jump again
-                    doubleJump = false;                                 //disable double jump
+                    IsJumping();
+                }
+                if(isWallSliding)
+                {
+                    WallJump();
                 }
             }
         }
@@ -88,27 +90,7 @@ public class MovementScript1 : MonoBehaviour
         if (isGrounded)                                                 //Whenever the player is on the ground
         {
             jumpCount = 0;                                              //reset double jump
-            wallJumpCount = 0;                                          //reset wall jump
-            doubleJump = true;                                          //enable wall jump
-        }
-
-        if (jumpCount == 2)                                             //if player already jump twice
-        {
-            doubleJump = false;                                         //disable double jump
-        }
-
-        if (rb2d.velocity.y < 0f)                                       //if player is falling
-        {
-            rb2d.velocity -= fallMultiplier * Time.deltaTime * gravity; //custom gravity, change fall multiplier to change gravity
-        }
-
-        if (!isGrounded && isWallSliding)                               //if you are not on the ground and you are wall sliding
-        {
-            movementSpeed = 0f;                                         //disable movement speed to wall slide
-            rb2d.velocity = new Vector2(movementSpeed, Mathf.Clamp(rb2d.velocity.y, -wallSlidingSpeed, float.MaxValue));
-        }                                                               //wall slide
-        else                                                            //if you are on the ground and not wall sliding
-        {
+            doubleJump = true;
             if (movingRight)                                            //if player is moving right
             {
                 movementSpeed = 7f;                                     //set speed to moving right
@@ -119,7 +101,21 @@ public class MovementScript1 : MonoBehaviour
             }
         }
 
-        wallJump();                                                     //Wall Jump method
+        if (jumpCount == 2)                                             //if player already jump twice
+        {
+            doubleJump = false;                                         //disable double jump
+        }
+
+        if (rb2d.velocity.y < 0f)                                       //if player is falling
+        {
+            CustomGravity();
+        }
+
+        if (!isGrounded && isWallSliding)                               //if you are not on the ground and you are wall sliding
+        {
+            IsWallSliding();
+        }                                                               //wall slide
+        WallJump();                                                     //Wall Jump method
 
     }
     private void OnCollisionEnter2D(Collision2D collision)
@@ -134,14 +130,14 @@ public class MovementScript1 : MonoBehaviour
         }
     }
 
-    public void wallJump()                                              
+    public void WallJump()
     {
         if (isWallSliding)                                              //if player is wall sliding
         {
             isWallJumping = false;                                      //player is not wall jumping
             wallJumpingDir = -transform.localScale.x;                   //jump in the opposite direction of where the sprite is facing
             wallJumpingCounter = wallJumpingTime;                       //???
-            wallJumpCount = 0;                                          //Reset wall jump count, player can double wall jump
+            jumpCount = 0;
             CancelInvoke(nameof(StopWallJump));                         //Let player wall jump
         }
         else                                                            //if player is not wall sliding
@@ -167,9 +163,9 @@ public class MovementScript1 : MonoBehaviour
 
         if (isWallJumping && Input.GetKeyDown(KeyCode.Space))           //if you are wall jumping and you press space
         {
-            rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);           //set vertical velocity to 0
+            movementUp = 0f;                                            //set vertical velocity to 0
             rb2d.AddForce(Vector2.up * jumpForce);                      //jump
-            wallJumpCount++;                                            //track how many wall jump has player jump
+            jumpCount++;
         }
     }
 
@@ -182,6 +178,40 @@ public class MovementScript1 : MonoBehaviour
     {
         rawMovement = new Vector3(movementSpeed, movementUp);
         transform.position += rawMovement * Time.deltaTime;
+    }
+
+    public void GroundCheck()
+    {
+        isGrounded = Physics2D.OverlapCapsule(groundCheck.position, new Vector2(0.4f, 0.1f), CapsuleDirection2D.Horizontal, 0, groundLayer);
+    }
+
+    public void WallCheck()
+    {
+        isWallSliding = Physics2D.OverlapCapsule(wallCheck.position, new Vector2(0.2f, 0.1f), CapsuleDirection2D.Vertical, 0, wallLayer);
+    }
+
+    public void CameraLerp()
+    {
+        cam.transform.position = Vector3.Lerp(new Vector3(cam.transform.position.x, cam.transform.position.y, -18f),
+            new Vector3(cam.transform.position.x, transform.position.y + offset, -18f), 2f * Time.deltaTime);
+    }
+
+    public void IsJumping()
+    {
+        rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
+        rb2d.AddForce(Vector2.up * jumpForce);
+        jumpCount++;
+    }
+
+    public void IsWallSliding()
+    {
+        movementSpeed = 0f;
+        rb2d.velocity = new Vector2(movementSpeed, Mathf.Clamp(rb2d.velocity.y, -wallSlidingSpeed, float.MaxValue));
+    }
+
+    public void CustomGravity()
+    {
+        rb2d.velocity -= fallMultiplier * Time.deltaTime * gravity;
     }
 }
 

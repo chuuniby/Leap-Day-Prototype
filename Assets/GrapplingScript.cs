@@ -11,7 +11,10 @@ public class GrapplingScript : MonoBehaviour
     public LayerMask playerLayerMask;
     public bool isHolding;
     public bool canGrapple;
+    public bool isGrappling;
     public RaycastHit2D hit;
+
+    public DistanceJoint2D distanceJoint;
 
     private void Update()
     {
@@ -27,6 +30,7 @@ public class GrapplingScript : MonoBehaviour
 
                     _gizmoLine.GetComponent<LineRenderer>().startColor = Color.red;
                     _gizmoLine.GetComponent<LineRenderer>().endColor = Color.red;
+                    canGrapple = false;
                 }
                 else if (hit.transform.CompareTag("Platform"))
                 {
@@ -39,12 +43,31 @@ public class GrapplingScript : MonoBehaviour
                 {
                     _gizmoLine.GetComponent<LineRenderer>().startColor = Color.red;
                     _gizmoLine.GetComponent<LineRenderer>().endColor = Color.red;
+                    canGrapple = false;
                 }
             }
         }
 
-        if(canGrapple)
-        player.transform.position = Vector3.Lerp(transform.position, hit.point, Time.deltaTime*4f);
+        if (isGrappling)
+        {
+            player.GetComponent<MovementScript>().movementSpeed = 0f;
+            player.GetComponent<MovementScript>().movementUp = 0f;
+            player.GetComponent<MovementScript>().enabled = false;
+            canGrapple = false;
+            //Vector3 direction = hit.point - new Vector2(transform.position.x, transform.position.y);
+            //player.transform.position += direction * Time.deltaTime;
+
+            //Vector3.Lerp(player.transform.position, hit.point, Time.deltaTime * player.GetComponent<MovementScript>().movementSpeed);
+
+            distanceJoint.enabled = true;
+            distanceJoint.distance -= Time.deltaTime;
+        }
+        else
+        {
+            distanceJoint.enabled = false;
+            player.GetComponent<MovementScript>().enabled = true;
+        }
+
     }
 
     public void DrawGizmos()
@@ -69,10 +92,10 @@ public class GrapplingScript : MonoBehaviour
         else
         {
             //grapple
-            Debug.Log(hit.point);
-            player.GetComponent<MovementScript>().movementSpeed = 0f;
+            //Debug.Log(hit.point);
+
+            isGrappling = true;
             Destroy(_gizmoLine);
-            canGrapple = false;
         }
     }
 
@@ -80,7 +103,7 @@ public class GrapplingScript : MonoBehaviour
     {
         if (collision.transform.CompareTag("Platform"))
         {
-            canGrapple = false;
+            isGrappling = false;
         }
     }
 }

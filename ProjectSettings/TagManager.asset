@@ -12,6 +12,7 @@ TagManager:
   - Platform
   - EnemyBullet
   - Enemy
+  - Manager
   layers:
   - Default
   - TransparentFX

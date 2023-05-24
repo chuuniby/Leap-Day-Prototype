@@ -33,7 +33,7 @@ public class NormalEnemyScript : MonoBehaviour
         if (rb.bodyType == RigidbodyType2D.Dynamic)
         {
             rb.velocity = new Vector2(movementSpeed, movementUp);
-            isAtCliff = Physics2D.OverlapBox(cliffCheck.position, new Vector2(1.5f, 1.5f), 0f, groundLayer);
+            isAtCliff = Physics2D.OverlapBox(cliffCheck.position, new Vector2(1.25f, 1.25f), 0f, groundLayer);
             isGrounded = Physics2D.OverlapCapsule(groundCheck.position, new Vector2(0.4f, 0.1f), CapsuleDirection2D.Horizontal, 0, groundLayer);
 
             if (!isAtCliff && isGrounded)
@@ -44,10 +44,10 @@ public class NormalEnemyScript : MonoBehaviour
                 transform.localScale = localscale;
             }
         }
-        if(rb.bodyType == RigidbodyType2D.Static)
-        {
+        //if(rb.bodyType == RigidbodyType2D.Static)     //freezing chip
+        //{
 
-        }
+        //}
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
