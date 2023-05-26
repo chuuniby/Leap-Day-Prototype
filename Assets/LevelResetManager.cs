@@ -24,8 +24,8 @@ public class LevelResetManager : MonoBehaviour
     {
         if (reset) //player hp = 0 => reset
         {
-            PlayerScript.playerScriptStatic.hp = PlayerScript.playerScriptStatic.hpMax;
             SceneManager.LoadScene("MainGameScene");
+            PlayerScript.playerScriptStatic.hp = PlayerScript.playerScriptStatic.hpMax;
             reset = false;
         }
     }

@@ -60,7 +60,7 @@ public class GrapplingScript : MonoBehaviour
             //Vector3.Lerp(player.transform.position, hit.point, Time.deltaTime * player.GetComponent<MovementScript>().movementSpeed);
 
             distanceJoint.enabled = true;
-            distanceJoint.distance -= Time.deltaTime;
+            distanceJoint.distance -= Time.deltaTime/2;
         }
         else
         {
