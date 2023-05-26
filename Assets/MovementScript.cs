@@ -10,6 +10,7 @@ public class MovementScript : MonoBehaviour
 {
     public Rigidbody2D rb2d;
     public GameObject cam;
+    public Animator animator;
 
     public float movementSpeed;
     public float movementUp;
@@ -54,6 +55,7 @@ public class MovementScript : MonoBehaviour
         movingRight = true;
         wallSlidingSpeed = 2f;
         cam = GameObject.FindGameObjectWithTag("MainCamera");
+        animator = GetComponent<Animator>();
     }
 
 
@@ -75,6 +77,7 @@ public class MovementScript : MonoBehaviour
         {
             if (isGrounded)
             {
+                animator.SetBool("AnimationJumping", true);
                 rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
                 rb2d.AddForce(Vector2.up * jumpForce);
                 jumpCount++;
@@ -83,6 +86,7 @@ public class MovementScript : MonoBehaviour
             {
                 if (doubleJump && !isWallSliding)
                 {
+                    //animator.SetBool("AnimationJumping", true);
                     rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
                     rb2d.AddForce(Vector2.up * jumpForce);
                     jumpCount++;
@@ -117,10 +121,12 @@ public class MovementScript : MonoBehaviour
             if (movingRight)
             {
                 movementSpeed = 7f;
+                animator.SetBool("AnimationMovingRight", true);
             }
             if (!movingRight)
             {
                 movementSpeed = -7f;
+                animator.SetBool("AnimationMovingRight", false);
             }
         }
 
@@ -133,9 +139,9 @@ public class MovementScript : MonoBehaviour
         {
             movementSpeed = -movementSpeed;
             movingRight = !movingRight;
-            Vector3 localscale = transform.localScale;
-            localscale.x *= -1f;
-            transform.localScale = localscale;
+            //Vector3 localscale = transform.localScale;
+            //localscale.x *= -1f;
+            //transform.localScale = localscale;
         }
     }
 
@@ -143,6 +149,7 @@ public class MovementScript : MonoBehaviour
     {
         if (isWallSliding)
         {
+            animator.SetBool("AnimationJumping", true);
             isWallJumping = false;
             wallJumpingDir = -transform.localScale.x;
             wallJumpingCounter = wallJumpingTime;
@@ -151,6 +158,7 @@ public class MovementScript : MonoBehaviour
         }
         else
         {
+            animator.SetBool("AnimationWallSliding", false);
             wallJumpingCounter -= Time.deltaTime;
         }
 
@@ -163,15 +171,16 @@ public class MovementScript : MonoBehaviour
             if (transform.localScale.x != wallJumpingDir)
             {
                 movingRight = !movingRight;
-                Vector3 localscale = transform.localScale;
-                localscale.x *= -1f;
-                transform.localScale = localscale;
+                //Vector3 localscale = transform.localScale;
+                //localscale.x *= -1f;
+                //transform.localScale = localscale;
             }
             Invoke(nameof(StopWallJump), wallJumpingDuration);
         }
 
         if (isWallJumping && Input.GetKeyDown(KeyCode.Space))
         {
+            //animator.SetBool("AnimationJumping", true);
             rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
             rb2d.AddForce(Vector2.up * jumpForce);
             wallJumpCount++;
@@ -181,6 +190,11 @@ public class MovementScript : MonoBehaviour
     public void StopWallJump()
     {
         isWallJumping = false;
+    }
+
+    public void StopJumpingAnimation()
+    {
+        animator.SetBool("AnimationJumping", false);
     }
 }
 
