@@ -92,6 +92,7 @@ public class MovementScript : MonoBehaviour
             Vector3 localscale = transform.localScale;
             localscale.x *= -1f;
             transform.localScale = localscale;
+            touchWall = false;
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
