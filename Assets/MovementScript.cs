@@ -63,8 +63,12 @@ public class MovementScript : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!isWallSliding)
+        {
+
         rawMovement = new Vector3(movementSpeed, 0f);
         transform.position += rawMovement * Time.deltaTime;
+        }
 
         cam.transform.position = Vector3.Lerp(new Vector3(cam.transform.position.x, cam.transform.position.y, cam.transform.position.z),
             new Vector3(cam.transform.position.x, transform.position.y + offset, transform.position.z - 18f), 2f * Time.deltaTime);
