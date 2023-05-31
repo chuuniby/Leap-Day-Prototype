@@ -16,11 +16,50 @@ public class GrapplingScript : MonoBehaviour
 
     public DistanceJoint2D distanceJoint;
 
+    public Vector2 grapplingDir;
+    public float grapplingForce;
+    public bool isGrapplingJump;
+
+    private void Start()
+    {
+        grapplingForce = 3000f;
+    }
+    private void FixedUpdate()
+    {
+        if (isGrappling)    //GrapplingCode
+        {
+            //player.GetComponent<MovementScript>().movementSpeed = 0f;
+            //player.GetComponent<MovementScript>().movementUp = 0f;
+            player.GetComponent<MovementScript>().enabled = false; //this doesnt help with why the player does not end up at where the indicator of the grappling is
+            canGrapple = false;
+            player.GetComponent<Rigidbody2D>().AddForce(grapplingForce * Time.fixedDeltaTime * grapplingDir); //Dont get component in update
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                player.GetComponent<MovementScript>().enabled = true;
+                isGrapplingJump = true;
+            }
+        }
+        else
+        {
+            player.GetComponent<MovementScript>().enabled = true;
+        }
+
+        if (isGrapplingJump)
+        {
+            isGrappling = false;
+            player.GetComponent<MovementScript>().GrapplingJump(); //Dont get component in update
+            //Find a way to stop GrapplingJump after hit a wall or landed or afterGraplingJump
+        }
+    }
+
     private void Update()
     {
+        Debug.Log(hit.point);
+        Debug.Log(player.transform.position);
         Debug.DrawRay(drawPosition.position, new Vector3(player.transform.localScale.x, 6f));
-
-        if(isHolding)
+        //Debug.DrawRay(drawPosition.position, grapplingDir,Color.red); //Draw Direction of grappling
+        if (isHolding)
         {
             hit = Physics2D.Raycast(drawPosition.position, new Vector3(player.transform.localScale.x, 6f), 6f, ~playerLayerMask);
             if (Physics2D.Raycast(drawPosition.position, new Vector3(player.transform.localScale.x, 6f), 6f))
@@ -34,6 +73,7 @@ public class GrapplingScript : MonoBehaviour
                 }
                 else if (hit.transform.CompareTag("Platform"))
                 {
+                    grapplingDir = new Vector2(hit.point.x - player.transform.position.x, hit.point.y - player.transform.position.y).normalized;
                     //Debug.Log(hit.transform.gameObject.name);
                     _gizmoLine.GetComponent<LineRenderer>().startColor = Color.green;
                     _gizmoLine.GetComponent<LineRenderer>().endColor = Color.green;
@@ -41,6 +81,7 @@ public class GrapplingScript : MonoBehaviour
                 }
                 else
                 {
+                    //Debug.Log(hit.transform.gameObject.name);
                     _gizmoLine.GetComponent<LineRenderer>().startColor = Color.red;
                     _gizmoLine.GetComponent<LineRenderer>().endColor = Color.red;
                     canGrapple = false;
@@ -48,26 +89,28 @@ public class GrapplingScript : MonoBehaviour
             }
         }
 
-        if (isGrappling)
-        {
-            player.GetComponent<MovementScript>().movementSpeed = 0f;
-            player.GetComponent<MovementScript>().movementUp = 0f;
-            player.GetComponent<MovementScript>().enabled = false;
-            canGrapple = false;
-            //Vector3 direction = hit.point - new Vector2(transform.position.x, transform.position.y);
-            //player.transform.position += direction * Time.deltaTime;
+        //if (isGrappling)    //Old Grappling Code
+        //{
+        //    player.GetComponent<MovementScript>().movementSpeed = 0f;
+        //    player.GetComponent<MovementScript>().movementUp = 0f;
+        //    player.GetComponent<MovementScript>().enabled = false;
+        //    canGrapple = false;
 
-            //Vector3.Lerp(player.transform.position, hit.point, Time.deltaTime * player.GetComponent<MovementScript>().movementSpeed);
+        //    distanceJoint.enabled = true;
+        //    distanceJoint.distance -= Time.deltaTime / 2;
 
-            distanceJoint.enabled = true;
-            distanceJoint.distance -= Time.deltaTime/2;
-        }
-        else
-        {
-            distanceJoint.enabled = false;
-            player.GetComponent<MovementScript>().enabled = true;
-        }
+        //    //Vector3 direction = hit.point - new Vector2(transform.position.x, transform.position.y);
+        //    //player.transform.position += direction * Time.deltaTime;
 
+        //    //Vector3.Lerp(player.transform.position, hit.point, Time.deltaTime * player.GetComponent<MovementScript>().movementSpeed);
+
+
+        //}
+        //else
+        //{
+        //    distanceJoint.enabled = false;
+        //    player.GetComponent<MovementScript>().enabled = true;
+        //}
     }
 
     public void DrawGizmos()
@@ -104,6 +147,7 @@ public class GrapplingScript : MonoBehaviour
         if (collision.transform.CompareTag("Platform"))
         {
             isGrappling = false;
+            isGrapplingJump = false;
         }
     }
 }

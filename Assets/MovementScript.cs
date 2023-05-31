@@ -162,7 +162,7 @@ public class MovementScript : MonoBehaviour
             }
         }
 
-        wallJump();
+        WallJump();
 
     }
     //private void OnCollisionEnter2D(Collision2D collision)
@@ -177,7 +177,7 @@ public class MovementScript : MonoBehaviour
     //    }
     //}
 
-    public void wallJump()
+    public void WallJump()
     {
         if (isWallSliding)
         {
@@ -234,6 +234,13 @@ public class MovementScript : MonoBehaviour
     public void LandingAnimation()
     {
         animator.SetBool("AnimationLanding", true);
+    }
+
+    public void GrapplingJump()
+    {
+        animator.SetBool("AnimationJumping", true);
+        rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
+        rb2d.AddForce(new Vector2(movementSpeed*5,jumpForce/10));
     }
 }
 
