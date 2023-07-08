@@ -51,7 +51,7 @@ public class MovementScript : MonoBehaviour
         gravity = new Vector2(0f, -Physics2D.gravity.y);
         movementSpeed = 7f;
         movementUp = 0f;
-        jumpForce = 25f;
+        jumpForce = 28f;
         fallMultiplier = 2.5f;
         movingRight = true;
         wallSlidingSpeed = 2f;
@@ -143,6 +143,7 @@ public class MovementScript : MonoBehaviour
 
         if (!isGrounded && isWallSliding)
         {
+            rb2d.velocity = Vector2.zero;
             movementSpeed = 0f;
             rb2d.velocity = new Vector2(movementSpeed, Mathf.Clamp(rb2d.velocity.y, -wallSlidingSpeed, float.MaxValue));
         }
