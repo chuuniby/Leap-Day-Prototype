@@ -51,7 +51,7 @@ public class MovementScript : MonoBehaviour
         gravity = new Vector2(0f, -Physics2D.gravity.y);
         movementSpeed = 7f;
         movementUp = 0f;
-        jumpForce = 1400f;
+        jumpForce = 25f;
         fallMultiplier = 2.5f;
         movingRight = true;
         wallSlidingSpeed = 2f;
@@ -104,8 +104,7 @@ public class MovementScript : MonoBehaviour
             if (isGrounded)
             {
                 animator.SetBool("AnimationJumping", true);
-                rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
-                rb2d.AddForce(Vector2.up * jumpForce);
+                rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
                 jumpCount++;
             }
             //else
@@ -113,8 +112,7 @@ public class MovementScript : MonoBehaviour
             //    if (doubleJump && !isWallSliding)
             //    {
             //        //animator.SetBool("AnimationJumping", true);
-            //        rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
-            //        rb2d.AddForce(Vector2.up * jumpForce);
+            //        rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
             //        jumpCount++;
             //    }
             //}

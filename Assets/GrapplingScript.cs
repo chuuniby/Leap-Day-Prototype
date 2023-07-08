@@ -55,8 +55,6 @@ public class GrapplingScript : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(hit.point);
-        Debug.Log(player.transform.position);
         Debug.DrawRay(drawPosition.position, new Vector3(player.transform.localScale.x, 6f));
         //Debug.DrawRay(drawPosition.position, grapplingDir,Color.red); //Draw Direction of grappling
         if (isHolding)

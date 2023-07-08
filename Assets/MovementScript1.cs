@@ -5,15 +5,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEditor;
-using Mono.Cecil.Cil;
 
 public class MovementScript1 : MonoBehaviour
 {
     public Rigidbody2D rb2d;
     public GameObject cam;
+    public Animator animator;
 
     public float movementSpeed;
     public float movementUp;
+    public float direction;
     public float jumpForce;
     public float fallMultiplier;
     public float wallSlidingSpeed;
@@ -26,7 +27,7 @@ public class MovementScript1 : MonoBehaviour
     public Vector2 movementDirection;
     public Vector2 previousPosition;
     public Vector3 rawMovement;
-    public Vector2 wallJumpingPower = new Vector2(8f, 16f);
+    public Vector2 wallJumpingPower;
 
     public Transform groundCheck;
     public LayerMask groundLayer;
@@ -35,187 +36,204 @@ public class MovementScript1 : MonoBehaviour
     public LayerMask wallLayer;
 
     public bool movingRight;
-    public bool isJumping;
-    public bool doubleJump;
     public bool isGrounded;
-    public bool isWallSliding;
+    public bool touchWall;
     public bool isWallJumping;
     public bool isWallJumpDoubleJump;
 
     public Vector2 gravity;
 
-    public int jumpCount;
-
-    private void Awake()
-    {
-        rb2d = GetComponent<Rigidbody2D>();
-        cam = GameObject.FindGameObjectWithTag("MainCamera");
-    }
+    public bool canJumpAgain;
     private void Start()
     {
         gravity = new Vector2(0f, -Physics2D.gravity.y);
         movementSpeed = 7f;
         movementUp = 0f;
-        jumpForce = 1250f;
+        jumpForce = 1400f;
         fallMultiplier = 2.5f;
         movingRight = true;
         wallSlidingSpeed = 2f;
+        cam = GameObject.FindGameObjectWithTag("MainCamera");
+        animator = GetComponent<Animator>();
+        wallJumpingPower = new Vector2(0f, 25f);
     }
+
+
+    private void FixedUpdate()
+    {
+        if (!touchWall)
+        {
+            rawMovement = new Vector3(movementSpeed, 0f);
+            transform.position += rawMovement * direction * Time.deltaTime;
+        }
+
+        cam.transform.position = Vector3.Lerp(new Vector3(cam.transform.position.x, cam.transform.position.y, cam.transform.position.z),
+            new Vector3(cam.transform.position.x, transform.position.y + offset, transform.position.z - 18f), 2f * Time.deltaTime);
+    }
+
 #if UNITY_STANDALONE_WIN
+
+    private void OnDrawGizmos()
+    {
+        if (isGrounded) { Gizmos.color = Color.green; } else { Gizmos.color = Color.red; }
+        if (touchWall) { Gizmos.color = Color.green; } else { Gizmos.color = Color.red; }
+        Gizmos.DrawLine(groundCheck.transform.position, groundCheck.transform.position + Vector3.down * 0.95f);
+        Gizmos.DrawLine(wallCheck.transform.position, wallCheck.transform.position + Vector3.right * direction * 0.95f);
+    }
     private void Update()
     {
-        MovementCalculation();
-        GroundCheck();
-        WallCheck();
-        CameraLerp();
+
+        isGrounded = Physics2D.Raycast(groundCheck.position, Vector2.down, 0.95f, groundLayer);
+
+        touchWall = Physics2D.Raycast(wallCheck.position, Vector2.right, 0.95f, wallLayer);
+
+        if (touchWall)
+        {
+            if(isGrounded)
+            {
+                movementSpeed = -movementSpeed;
+                movingRight = !movingRight;
+                Vector3 localscale = transform.localScale;
+                localscale.x *= direction;
+                transform.localScale = localscale;
+                touchWall = false;
+            }
+            else
+            {
+                movementSpeed = 0f;
+                rb2d.velocity = new Vector2(movementSpeed, Mathf.Clamp(rb2d.velocity.y, -wallSlidingSpeed, float.MaxValue));
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (isGrounded)
             {
-                IsJumping();
+                animator.SetBool("AnimationJumping", true);
+                rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
+                rb2d.AddForce(Vector2.up * jumpForce);
             }
-            else
+            //else
+            //{
+            //    if (doubleJump && !touchWall)
+            //    {
+            //        //animator.SetBool("AnimationJumping", true);
+            //        rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
+            //        rb2d.AddForce(Vector2.up * jumpForce);
+            //        jumpCount++;
+            //    }
+            //}
+        }
+
+        //if(isGrounded && touchWall)
+        //{
+        //    movingRight = !movingRight;
+        //    touchWall = false;
+        //}
+
+        //if (jumpCount == 2)
+        //{
+        //    doubleJump = false;
+        //}
+
+        if (rb2d.velocity.y < 0f)
+        {
+            rb2d.velocity -= fallMultiplier * Time.deltaTime * gravity;
+        }
+        else
+        {
+            if (movingRight)
             {
-                if(doubleJump)
-                {
-                    IsJumping();
-                }
-                if(isWallSliding)
-                {
-                    WallJump();
-                }
+                direction = 1f;
+                animator.SetBool("AnimationMovingRight", true);
             }
-        }
-
-        if (isGrounded)                                                 //Whenever the player is on the ground
-        {
-            jumpCount = 0;                                              //reset double jump
-            doubleJump = true;
-            if (movingRight)                                            //if player is moving right
+            if (!movingRight)
             {
-                movementSpeed = 7f;                                     //set speed to moving right
-            }
-            if (!movingRight)                                           //if player is movinng left
-            {
-                movementSpeed = -7f;                                    //set speed to moving left
+                direction = -1f;
+                animator.SetBool("AnimationMovingRight", false);
             }
         }
 
-        if (jumpCount == 2)                                             //if player already jump twice
-        {
-            doubleJump = false;                                         //disable double jump
-        }
-
-        if (rb2d.velocity.y < 0f)                                       //if player is falling
-        {
-            CustomGravity();
-        }
-
-        if (!isGrounded && isWallSliding)                               //if you are not on the ground and you are wall sliding
-        {
-            IsWallSliding();
-        }                                                               //wall slide
-        WallJump();                                                     //Wall Jump method
+        WallJump();
 
     }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.transform.CompareTag("Wall"))                     //if player hit the wall
-        {
-            movementSpeed = -movementSpeed;                             //move in the reverse direction
-            movingRight = !movingRight;                                 //tell the system that you are moving in the reverse direction
-            Vector3 localscale = transform.localScale;                  
-            localscale.x *= -1f;                                        
-            transform.localScale = localscale;                          //change the sprite to face the opposite direction
-        }
-    }
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (isGrounded && collision.transform.CompareTag("Wall"))
+    //    {
+    //        movementSpeed = -movementSpeed;
+    //        movingRight = !movingRight;
+    //        Vector3 localscale = transform.localScale;
+    //        localscale.x *= -1f;
+    //        transform.localScale = localscale;
+    //    }
+    //}
 
     public void WallJump()
     {
-        if (isWallSliding)                                              //if player is wall sliding
+        if (touchWall)
         {
-            isWallJumping = false;                                      //player is not wall jumping
-            wallJumpingDir = -transform.localScale.x;                   //jump in the opposite direction of where the sprite is facing
-            wallJumpingCounter = wallJumpingTime;                       //???
-            jumpCount = 0;
-            CancelInvoke(nameof(StopWallJump));                         //Let player wall jump
+            animator.SetBool("AnimationWallSliding", true);
+            wallJumpingDir = -transform.localScale.x;
+            isWallJumping = false;
+            wallJumpingCounter = wallJumpingTime;
+            CancelInvoke(nameof(StopWallJump));
         }
-        else                                                            //if player is not wall sliding
+        else
         {
-            wallJumpingCounter -= Time.deltaTime;                       //???
+            animator.SetBool("AnimationWallSliding", false);
+            wallJumpingCounter -= Time.deltaTime;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && wallJumpingCounter > 0f) //if player press space and ???
+        if (Input.GetKeyDown(KeyCode.Space) && wallJumpingCounter > 0f)
         {
-            isWallJumping = true;                                       //start wall jumping
-            rb2d.velocity = new Vector2(wallJumpingDir * wallJumpingPower.x, wallJumpingPower.y);   //wall jump by a fixed amount
-            wallJumpingCounter = 0f;                                    //???
+            animator.SetBool("AnimationWallJumping", true);
+            isWallJumping = true;
+            rb2d.velocity = new Vector2(wallJumpingDir * wallJumpingPower.x, wallJumpingPower.y);
+            wallJumpingCounter = 0f;
 
-            if (transform.localScale.x != wallJumpingDir)               //if player is not facing the same direction as wall jumping direction
+            if (transform.localScale.x != wallJumpingDir)
             {
-                movingRight = !movingRight;                             //move the same way as jumping direction
-                Vector3 localscale = transform.localScale;              
+                movingRight = !movingRight;
+                Vector3 localscale = transform.localScale;
                 localscale.x *= -1f;
-                transform.localScale = localscale;                      //face the same direction as wall jumping direction
+                transform.localScale = localscale;
             }
-            Invoke(nameof(StopWallJump), wallJumpingDuration);          //stop wall jump
+            Invoke(nameof(StopWallJump), wallJumpingDuration);
         }
 
-        if (isWallJumping && Input.GetKeyDown(KeyCode.Space))           //if you are wall jumping and you press space
-        {
-            movementUp = 0f;                                            //set vertical velocity to 0
-            rb2d.AddForce(Vector2.up * jumpForce);                      //jump
-            jumpCount++;
-        }
+        //if (isWallJumping && Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    //animator.SetBool("AnimationJumping", true);
+        //    rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
+        //    rb2d.AddForce(Vector2.up * jumpForce);
+        //    wallJumpCount++;
+        //}
     }
 
     public void StopWallJump()
     {
-        isWallJumping = false;                                          //player is not wall jumping
+        isWallJumping = false;
+        animator.SetBool("AnimationWallJumping", false);
     }
 
-    public void MovementCalculation()
+    public void StopJumpingAnimation()
     {
-        rawMovement = new Vector3(movementSpeed, movementUp);
-        transform.position += rawMovement * Time.deltaTime;
+        animator.SetBool("AnimationJumping", false);
     }
 
-    public void GroundCheck()
+    public void LandingAnimation()
     {
-        isGrounded = Physics2D.OverlapCapsule(groundCheck.position, new Vector2(0.4f, 0.1f), CapsuleDirection2D.Horizontal, 0, groundLayer);
+        animator.SetBool("AnimationLanding", true);
     }
 
-    public void WallCheck()
+    public void GrapplingJump()
     {
-        isWallSliding = Physics2D.OverlapCapsule(wallCheck.position, new Vector2(0.2f, 0.1f), CapsuleDirection2D.Vertical, 0, wallLayer);
-    }
-
-    public void CameraLerp()
-    {
-        cam.transform.position = Vector3.Lerp(new Vector3(cam.transform.position.x, cam.transform.position.y, -18f),
-            new Vector3(cam.transform.position.x, transform.position.y + offset, -18f), 2f * Time.deltaTime);
-    }
-
-    public void IsJumping()
-    {
+        animator.SetBool("AnimationJumping", true);
         rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
-        rb2d.AddForce(Vector2.up * jumpForce);
-        jumpCount++;
-    }
-
-    public void IsWallSliding()
-    {
-        movementSpeed = 0f;
-        rb2d.velocity = new Vector2(movementSpeed, Mathf.Clamp(rb2d.velocity.y, -wallSlidingSpeed, float.MaxValue));
-    }
-
-    public void CustomGravity()
-    {
-        rb2d.velocity -= fallMultiplier * Time.deltaTime * gravity;
+        rb2d.AddForce(new Vector2(movementSpeed * 5, jumpForce / 10));
     }
 }
-
-
 
 #endif
 
@@ -287,7 +305,7 @@ public class MovementScript1 : MonoBehaviour
         }
 
         isGrounded = Physics2D.OverlapCapsule(groundCheck.position, new Vector2(0.4f, 0.1f), CapsuleDirection2D.Horizontal, 0, groundLayer);
-        isWallSliding = Physics2D.OverlapCapsule(wallCheck.position, new Vector2(0.2f, 0.1f), CapsuleDirection2D.Vertical, 0, wallLayer);
+        touchWall = Physics2D.OverlapCapsule(wallCheck.position, new Vector2(0.2f, 0.1f), CapsuleDirection2D.Vertical, 0, wallLayer);
         if (Input.touchCount > 0)
         {
             if (Mathf.Abs(x) == 0 && Mathf.Abs(y) == 0)
@@ -326,7 +344,7 @@ public class MovementScript1 : MonoBehaviour
                 rb2d.velocity -= fallMultiplier * Time.deltaTime * gravity;
             }
 
-            if (!isGrounded && isWallSliding)
+            if (!isGrounded && touchWall)
             {
                 movementSpeed = 0f;
                 rb2d.velocity = new Vector2(movementSpeed, Mathf.Clamp(rb2d.velocity.y, -wallSlidingSpeed, float.MaxValue));
@@ -361,7 +379,7 @@ public class MovementScript1 : MonoBehaviour
 
     public void wallJump()
     {
-        if (isWallSliding)
+        if (touchWall)
         {
             isWallJumping = false;
             wallJumpingDir = -transform.localScale.x;
