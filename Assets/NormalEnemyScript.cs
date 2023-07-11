@@ -5,10 +5,14 @@ using UnityEngine;
 
 public class NormalEnemyScript : MonoBehaviour
 {
+
+    //SINCE WE ARE SOMEHOW WALKING ON WALL ALSO SO WE NEED TO FIND ANOTHER WAY TO DETECT SURFACE TO MOVE ON LIKE RAYCAST OR SOMETHING
+    //PLEASE REMEMBER TO READ THIS
+
     public float movementSpeed;
     public float movementUp;
     public Rigidbody2D rb;
-    public bool isAtCliff;
+    public bool isNotAtCliff;
     public bool isGrounded;
     public Transform cliffCheck;
     public LayerMask groundLayer;
@@ -30,13 +34,15 @@ public class NormalEnemyScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+
         if (rb.bodyType == RigidbodyType2D.Dynamic)
         {
             rb.velocity = new Vector2(movementSpeed, movementUp);
-            isAtCliff = Physics2D.OverlapBox(cliffCheck.position, new Vector2(1.25f, 1.25f), 0f, groundLayer);
+            isNotAtCliff = Physics2D.OverlapBox(cliffCheck.position, new Vector2(0.5f, 0.5f), 0f, groundLayer);
             isGrounded = Physics2D.OverlapCapsule(groundCheck.position, new Vector2(0.4f, 0.1f), CapsuleDirection2D.Horizontal, 0, groundLayer);
 
-            if (!isAtCliff && isGrounded)
+            if (!isNotAtCliff && isGrounded)
             {
                 movementSpeed = -movementSpeed;
                 Vector3 localscale = transform.localScale;

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
+
+    //PLEASE DO THE IMMORTAL TIME AFTER GET HIT THINGY
+
     public static PlayerScript playerScriptStatic;
     public int hp;
     public int coin;
