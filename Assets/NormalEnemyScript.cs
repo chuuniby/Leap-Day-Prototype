@@ -25,17 +25,8 @@ public class NormalEnemyScript : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
     }
-    void Start()
-    {
-        movementSpeed = 3f;
-        movementUp = 0f;
-    }
-
-    // Update is called once per frame
     void Update()
     {
-
-
         if (rb.bodyType == RigidbodyType2D.Dynamic)
         {
             rb.velocity = new Vector2(movementSpeed, movementUp);

@@ -11,8 +11,10 @@ public class BossScript : MonoBehaviour
     public GameObject warningSign;
 
     public float timer;
+    public float waitingTimeForWarningSign;
 
     public Color tmpColor;
+    public Color tmpWarningColor;
 
     public bool startPattern;
     public enum BossPhase
@@ -59,11 +61,12 @@ public class BossScript : MonoBehaviour
         {
             foreach (GameObject spike in spikes)
             {
-                //warningSign.GetComponent<SpriteRenderer>().color = new Color(255f, 235f, 0f, 255f); Yellow colour
+                warningSign.GetComponent<SpriteRenderer>().color = new Color(255f, 235f, 0f, 255f);
                 tmpColor.a = 0.3f;
                 spike.GetComponent<SpriteRenderer>().color = tmpColor;
                 spike.GetComponent<PolygonCollider2D>().enabled = false;
             }
+            StartCoroutine(Warning());
             yield return new WaitForSeconds(3f);
             StartCoroutine (SpikeAppear());
         }
@@ -85,6 +88,12 @@ public class BossScript : MonoBehaviour
             StartCoroutine (SpikeFade());
         }
 
+    }
+
+    IEnumerator Warning()
+    {
+        yield return new WaitForSeconds(waitingTimeForWarningSign);
+        warningSign.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f, 255f);
     }
 
 }
