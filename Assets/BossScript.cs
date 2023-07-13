@@ -55,7 +55,7 @@ public class BossScript : MonoBehaviour
         }
     }
 
-    IEnumerator SpikeFade()
+    IEnumerator SpikeFade() //Stop Attack
     {
         if (spikeGroup.activeInHierarchy)
         {
@@ -72,7 +72,7 @@ public class BossScript : MonoBehaviour
         }
     }
 
-    IEnumerator SpikeAppear()
+    IEnumerator SpikeAppear() //Start Attack
     {
         if (spikeGroup.activeInHierarchy)
         {

@@ -5082,6 +5082,18 @@ PrefabInstance:
       propertyPath: cam
       value: 
       objectReference: {fileID: 641629427}
+    - target: {fileID: 7600245104401257342, guid: 55ed0da70a0b94448af44b230063ed5b, type: 3}
+      propertyPath: wallSlidingSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7600245104401257342, guid: 55ed0da70a0b94448af44b230063ed5b, type: 3}
+      propertyPath: wallJumpingPower.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7600245104401257342, guid: 55ed0da70a0b94448af44b230063ed5b, type: 3}
+      propertyPath: wallJumpingPower.y
+      value: 28
+      objectReference: {fileID: 0}
     - target: {fileID: 7600245104401257357, guid: 55ed0da70a0b94448af44b230063ed5b, type: 3}
       propertyPath: distanceJoint
       value: 

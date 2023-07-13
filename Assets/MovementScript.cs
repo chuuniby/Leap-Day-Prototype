@@ -75,7 +75,7 @@ public class MovementScript : MonoBehaviour
     private void Update()
     {
         //Debug.Log(rb2d.velocity);
-        if(TmpCollider.instance.isCollidedThisFrame)
+        if (TmpCollider.instance.isCollidedThisFrame)
         {
             rb2d.velocity = Vector2.zero;
             TmpCollider.instance.isCollidedThisFrame = false;
@@ -133,6 +133,7 @@ public class MovementScript : MonoBehaviour
             jumpCount = 0;
             wallJumpCount = 0;
             doubleJump = true;
+            TmpCollider.instance.tmpCol.enabled = true;
         }
 
         //if (jumpCount == 2)
@@ -148,7 +149,6 @@ public class MovementScript : MonoBehaviour
         if ((!isGrounded) && isWallSliding)
         {
             TmpCollider.instance.tmpCol.enabled = false;
-            TmpCollider.instance.isCollidedThisFrame = true;
             rb2d.velocity = new Vector2(movementSpeed, -wallSlidingSpeed);
         }
         else
@@ -203,7 +203,10 @@ public class MovementScript : MonoBehaviour
         {
             animator.SetBool("AnimationWallJumping", true);
             isWallJumping = true;
+            rb2d.velocity = Vector2.zero;
             rb2d.velocity = new Vector2(wallJumpingDir * wallJumpingPower.x, wallJumpingPower.y);
+            //Debug.Log(rb2d.velocity);
+            //Debug.Log(("walljump " + wallJumpingDir * wallJumpingPower.x, wallJumpingPower.y));
             wallJumpingCounter = 0f;
 
             if (transform.localScale.x != wallJumpingDir)

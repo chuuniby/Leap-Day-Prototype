@@ -13,4 +13,12 @@ public class TmpCollider : MonoBehaviour
     {
         instance = this;
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.transform.CompareTag("Wall"))
+        {
+            TmpCollider.instance.isCollidedThisFrame = true;
+        }
+    }
 }
