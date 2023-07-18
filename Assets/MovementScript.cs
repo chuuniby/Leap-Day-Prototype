@@ -21,7 +21,7 @@ public class MovementScript : MonoBehaviour
     public float wallJumpingDir;
     public float wallJumpingTime = 0.2f;
     public float wallJumpingCounter;
-    public float wallJumpingDuration = 0.4f;
+    public float wallJumpingDuration = 0.6f;
     public float offset = 4.5f;
 
     public Vector2 movementDirection;
@@ -40,7 +40,6 @@ public class MovementScript : MonoBehaviour
     public bool isGrounded;
     public bool isWallSliding;
     public bool isWallJumping;
-    public bool isWallJumpDoubleJump;
     public bool touchWall;
     public bool wallStop;
 
@@ -74,7 +73,6 @@ public class MovementScript : MonoBehaviour
 #if UNITY_STANDALONE_WIN
     private void Update()
     {
-        //Debug.Log(rb2d.velocity);
         if (TmpCollider.instance.isCollidedThisFrame)
         {
             rb2d.velocity = Vector2.zero;
@@ -103,30 +101,10 @@ public class MovementScript : MonoBehaviour
             touchWall = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (jumpCount == 2)
         {
-            if (isGrounded)
-            {
-                animator.SetBool("AnimationJumping", true);
-                rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
-                jumpCount++;
-            }
-            //else
-            //{
-            //    if (doubleJump && !isWallSliding)
-            //    {
-            //        //animator.SetBool("AnimationJumping", true);
-            //        rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
-            //        jumpCount++;
-            //    }
-            //}
+            doubleJump = false;
         }
-
-        //if(isGrounded && isWallSliding)
-        //{
-        //    movingRight = !movingRight;
-        //    isWallSliding = false;
-        //}
 
         if (isGrounded)
         {
@@ -134,12 +112,27 @@ public class MovementScript : MonoBehaviour
             wallJumpCount = 0;
             doubleJump = true;
             TmpCollider.instance.tmpCol.enabled = true;
+            Invoke(nameof(StopWallJump), 0f);
         }
 
-        //if (jumpCount == 2)
-        //{
-        //    doubleJump = false;
-        //}
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (isGrounded)
+            {
+                jumpCount++;
+                animator.SetBool("AnimationJumping", true);
+                rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
+            }
+            else
+            {
+                if (doubleJump && !isWallSliding)
+                {
+                    //animator.SetBool("AnimationJumping", true);
+                    rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
+                    jumpCount++;
+                }
+            }
+        }
 
         if (rb2d.velocity.y < 0f)
         {
@@ -164,33 +157,21 @@ public class MovementScript : MonoBehaviour
                 animator.SetBool("AnimationMovingRight", false);
             }
             TmpCollider.instance.tmpCol.enabled = true;
-
         }
-
         WallJump();
-
     }
-    //private void OnCollisionEnter2D(Collision2D collision)
-    //{
-    //    if (isGrounded && collision.transform.CompareTag("Wall"))
-    //    {
-    //        movementSpeed = -movementSpeed;
-    //        movingRight = !movingRight;
-    //        Vector3 localscale = transform.localScale;
-    //        localscale.x *= -1f;
-    //        transform.localScale = localscale;
-    //    }
-    //}
 
     public void WallJump()
     {
         if (isWallSliding)
         {
             animator.SetBool("AnimationWallSliding", true);
-            wallJumpingDir = -transform.localScale.x;
             isWallJumping = false;
+            wallJumpingDir = -transform.localScale.x;
             wallJumpingCounter = wallJumpingTime;
             wallJumpCount = 0;
+            jumpCount = 0;
+            doubleJump = false;
             CancelInvoke(nameof(StopWallJump));
         }
         else
@@ -205,10 +186,7 @@ public class MovementScript : MonoBehaviour
             isWallJumping = true;
             rb2d.velocity = Vector2.zero;
             rb2d.velocity = new Vector2(wallJumpingDir * wallJumpingPower.x, wallJumpingPower.y);
-            //Debug.Log(rb2d.velocity);
-            //Debug.Log(("walljump " + wallJumpingDir * wallJumpingPower.x, wallJumpingPower.y));
             wallJumpingCounter = 0f;
-
             if (transform.localScale.x != wallJumpingDir)
             {
                 movingRight = !movingRight;
@@ -216,16 +194,15 @@ public class MovementScript : MonoBehaviour
                 localscale.x *= -1f;
                 transform.localScale = localscale;
             }
-            Invoke(nameof(StopWallJump), wallJumpingDuration);
         }
 
-        //if (isWallJumping && Input.GetKeyDown(KeyCode.Space))
-        //{
-        //    //animator.SetBool("AnimationJumping", true);
-        //    rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
-        //    rb2d.AddForce(Vector2.up * jumpForce);
-        //    wallJumpCount++;
-        //}
+        if (isWallJumping && Input.GetKeyDown(KeyCode.Space) && wallJumpCount < 2)
+        {
+            //animator.SetBool("AnimationJumping", true);
+            rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
+            rb2d.velocity = new Vector2(wallJumpingDir * wallJumpingPower.x, wallJumpingPower.y);
+            wallJumpCount++;
+        }
     }
 
     public void StopWallJump()
@@ -250,8 +227,6 @@ public class MovementScript : MonoBehaviour
         rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
         rb2d.AddForce(new Vector2(movementSpeed * 5, jumpForce / 10));
     }
-
-
 }
 
 #endif

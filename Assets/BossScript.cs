@@ -36,6 +36,7 @@ public class BossScript : MonoBehaviour
             case BossPhase.Phase1:
 
                 break;
+
             case BossPhase.Phase2:
                 spikeGroup.SetActive(true);
 
@@ -47,6 +48,7 @@ public class BossScript : MonoBehaviour
 
 
                 break;
+
                 case BossPhase.Phase3:
                 StopAllCoroutines();
 
@@ -55,7 +57,7 @@ public class BossScript : MonoBehaviour
         }
     }
 
-    IEnumerator SpikeFade() //Stop Attack
+    IEnumerator SpikeFade() //Stop Attack Phase 2
     {
         if (spikeGroup.activeInHierarchy)
         {
@@ -72,7 +74,7 @@ public class BossScript : MonoBehaviour
         }
     }
 
-    IEnumerator SpikeAppear() //Start Attack
+    IEnumerator SpikeAppear() //Start Attack Phase 2
     {
         if (spikeGroup.activeInHierarchy)
         {
@@ -90,10 +92,15 @@ public class BossScript : MonoBehaviour
 
     }
 
-    IEnumerator Warning()
+    IEnumerator Warning() //Warning Phase 2
     {
         yield return new WaitForSeconds(waitingTimeForWarningSign);
         warningSign.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f, 255f);
     }
 
+    IEnumerator LaserAppear() //Start Attack Phase 3
+    {
+
+        yield return null;
+    }
 }
