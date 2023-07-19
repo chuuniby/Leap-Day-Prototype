@@ -14,8 +14,6 @@ public class GrapplingScript : MonoBehaviour
     public bool isGrappling;
     public RaycastHit2D hit;
 
-    public DistanceJoint2D distanceJoint;
-
     public Vector2 grapplingDir;
     public float grapplingForce;
     public bool isGrapplingJump;
@@ -86,29 +84,6 @@ public class GrapplingScript : MonoBehaviour
                 }
             }
         }
-
-        //if (isGrappling)    //Old Grappling Code
-        //{
-        //    player.GetComponent<MovementScript>().movementSpeed = 0f;
-        //    player.GetComponent<MovementScript>().movementUp = 0f;
-        //    player.GetComponent<MovementScript>().enabled = false;
-        //    canGrapple = false;
-
-        //    distanceJoint.enabled = true;
-        //    distanceJoint.distance -= Time.deltaTime / 2;
-
-        //    //Vector3 direction = hit.point - new Vector2(transform.position.x, transform.position.y);
-        //    //player.transform.position += direction * Time.deltaTime;
-
-        //    //Vector3.Lerp(player.transform.position, hit.point, Time.deltaTime * player.GetComponent<MovementScript>().movementSpeed);
-
-
-        //}
-        //else
-        //{
-        //    distanceJoint.enabled = false;
-        //    player.GetComponent<MovementScript>().enabled = true;
-        //}
     }
 
     public void DrawGizmos()

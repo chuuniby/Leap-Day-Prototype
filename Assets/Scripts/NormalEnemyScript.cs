@@ -14,9 +14,17 @@ public class NormalEnemyScript : MonoBehaviour
     public Rigidbody2D rb;
     public bool isNotAtCliff;
     public bool isGrounded;
+    public bool nearWall;
+    public bool died;
+    public LayerMask wallLayer;
     public Transform cliffCheck;
     public LayerMask groundLayer;
     public Transform groundCheck;
+    public Animator animator;
+    public ParticleSystem explosionParticleSystem;
+    public ParticleSystem nutParticleSystem;
+    public ParticleSystem boltParticleSystem;
+    public ParticleSystem smokeParticleSystem;
 
     public int hp;
 
@@ -27,34 +35,62 @@ public class NormalEnemyScript : MonoBehaviour
     }
     void Update()
     {
-        if (rb.bodyType == RigidbodyType2D.Dynamic)
+        if(died)
         {
-            rb.velocity = new Vector2(movementSpeed, movementUp);
-            isNotAtCliff = Physics2D.OverlapBox(cliffCheck.position, new Vector2(0.5f, 0.5f), 0f, groundLayer);
-            isGrounded = Physics2D.OverlapCapsule(groundCheck.position, new Vector2(0.4f, 0.1f), CapsuleDirection2D.Horizontal, 0, groundLayer);
-
-            if (!isNotAtCliff && isGrounded)
-            {
-                movementSpeed = -movementSpeed;
-                Vector3 localscale = transform.localScale;
-                localscale.x *= -1f;
-                transform.localScale = localscale;
-            }
+            movementSpeed = 0;
+            animator.enabled = false;
+            StartCoroutine(PlayParticleSystem());
+            died = false;
         }
-        //if(rb.bodyType == RigidbodyType2D.Static)     //freezing chip
+
+        //if (rb.bodyType == RigidbodyType2D.Dynamic)
         //{
+        rb.velocity = new Vector2(movementSpeed, movementUp);
+        isNotAtCliff = Physics2D.OverlapBox(cliffCheck.position, new Vector2(2f, 2f), 0f, groundLayer);
+        isGrounded = Physics2D.Raycast(transform.position, Vector2.down, 2f, groundLayer);
+        nearWall = Physics2D.Raycast(transform.position, Vector2.right * transform.localScale, 2f, wallLayer);
 
-        //}
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.transform.CompareTag("Wall"))
+        if (!isNotAtCliff && isGrounded)
         {
             movementSpeed = -movementSpeed;
             Vector3 localscale = transform.localScale;
             localscale.x *= -1f;
             transform.localScale = localscale;
         }
+
+        if (nearWall)
+        {
+            movementSpeed = -movementSpeed;
+            Vector3 localscale = transform.localScale;
+            localscale.x *= -1f;
+            transform.localScale = localscale;
+        }
+
+        //}
+        //if(rb.bodyType == RigidbodyType2D.Static)     //freezing chip
+        //{
+
+        //}
+    }
+
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (collision.transform.CompareTag("Wall"))
+    //    {
+    //        movementSpeed = -movementSpeed;
+    //        Vector3 localscale = transform.localScale;
+    //        localscale.x *= -1f;
+    //        transform.localScale = localscale;
+    //    }
+    //}
+
+    IEnumerator PlayParticleSystem()
+    {
+        explosionParticleSystem.Play();
+        nutParticleSystem.Play();
+        boltParticleSystem.Play();
+        smokeParticleSystem.Play();
+        yield return new WaitForSeconds(1f);
+        Destroy(gameObject);
     }
 }

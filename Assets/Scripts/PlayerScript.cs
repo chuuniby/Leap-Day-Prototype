@@ -8,12 +8,14 @@ public class PlayerScript : MonoBehaviour
     //PLEASE DO THE IMMORTAL TIME AFTER GET HIT THINGY
 
     public static PlayerScript playerScriptStatic;
+    public MovementScript movementScript;
     public int hp;
     public int coin;
     public int hpMax;
     private void Awake()
     {
         playerScriptStatic = this;
+        movementScript = transform.GetComponent<MovementScript>();
     }
     void Start()
     {
@@ -65,8 +67,16 @@ public class PlayerScript : MonoBehaviour
     {
         if (collision.transform.CompareTag("Enemy"))
         {
-            hp -= 1;
-            transform.position = LevelResetManager.instance.respawnPoint;
+            if (movementScript.rb2d.velocity.y >= 0)
+            {
+                hp -= 1;
+                transform.position = LevelResetManager.instance.respawnPoint;
+            }
+            else
+            {
+                collision.transform.GetComponent<NormalEnemyScript>().died = true;
+            }
+
         }
     }
 }
