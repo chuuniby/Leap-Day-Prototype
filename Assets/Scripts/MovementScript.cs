@@ -35,13 +35,13 @@ public class MovementScript : MonoBehaviour
     public Transform wallCheck;
     public LayerMask wallLayer;
 
-    public bool movingRight;
     public bool doubleJump;
     public bool isGrounded;
+    public bool touchWall;
     public bool isWallSliding;
     public bool isWallJumping;
-    public bool touchWall;
     public bool wallStop;
+    public bool movingRight;
 
     public Vector2 gravity;
 
@@ -73,6 +73,7 @@ public class MovementScript : MonoBehaviour
 #if UNITY_STANDALONE_WIN
     private void Update()
     {
+        Debug.Log(rb2d.velocity);
         if (TmpCollider.instance.isCollidedThisFrame)
         {
             rb2d.velocity = Vector2.zero;
@@ -84,6 +85,8 @@ public class MovementScript : MonoBehaviour
         if (!isGrounded)
         {
             isWallSliding = Physics2D.OverlapCapsule(wallCheck.position, new Vector2(0.2f, 0.1f), CapsuleDirection2D.Vertical, 0, wallLayer);
+            animator.SetBool("AnimationMovingRight", false);
+            animator.SetBool("OnGround", false);
         }
         else
         {
@@ -91,7 +94,21 @@ public class MovementScript : MonoBehaviour
             isWallSliding = false;
         }
 
-        if (touchWall)
+        if(isGrounded && rb2d.velocity.y == 0)
+        {
+            animator.SetBool("OnGround", true);
+        }
+        else
+        {
+            animator.SetBool("OnGround", false);
+        }
+
+        if (isGrounded && rb2d.velocity.y <= 0)
+        {
+            animator.SetBool("AnimationWallJumping", false);
+        }
+
+            if (touchWall)
         {
             movementSpeed = -movementSpeed;
             movingRight = !movingRight;
@@ -112,7 +129,9 @@ public class MovementScript : MonoBehaviour
             wallJumpCount = 0;
             doubleJump = true;
             TmpCollider.instance.tmpCol.enabled = true;
-            Invoke(nameof(StopWallJump), 0f);
+            StopWallJump();
+            animator.SetBool("AnimationJumping", false);
+            animator.SetBool("AnimationWallJumping",false);
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -137,6 +156,12 @@ public class MovementScript : MonoBehaviour
         if (rb2d.velocity.y < 0f)
         {
             rb2d.velocity -= fallMultiplier * Time.deltaTime * gravity;
+            animator.SetBool("AnimationWallJumping", false);
+            animator.SetBool("LandingPhase", true);
+        }
+        else
+        {
+            animator.SetBool("LandingPhase", false);
         }
 
         if ((!isGrounded) && isWallSliding)
@@ -166,6 +191,7 @@ public class MovementScript : MonoBehaviour
         if (isWallSliding)
         {
             animator.SetBool("AnimationWallSliding", true);
+            animator.SetBool("AnimationWallJumping", false);
             isWallJumping = false;
             wallJumpingDir = -transform.localScale.x;
             wallJumpingCounter = wallJumpingTime;
@@ -215,12 +241,6 @@ public class MovementScript : MonoBehaviour
     {
         animator.SetBool("AnimationJumping", false);
     }
-
-    public void LandingAnimation()
-    {
-        animator.SetBool("AnimationLanding", true);
-    }
-
     public void GrapplingJump()
     {
         animator.SetBool("AnimationJumping", true);
