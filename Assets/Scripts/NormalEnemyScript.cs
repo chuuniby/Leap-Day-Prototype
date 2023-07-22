@@ -6,12 +6,13 @@ using UnityEngine;
 public class NormalEnemyScript : MonoBehaviour
 {
 
-    //SINCE WE ARE SOMEHOW WALKING ON WALL ALSO SO WE NEED TO FIND ANOTHER WAY TO DETECT SURFACE TO MOVE ON LIKE RAYCAST OR SOMETHING
+    //SINCE WE ARE SOMEHOW WALKING ON WALL SO WE NEED TO FIND ANOTHER WAY TO DETECT SURFACE TO MOVE ON LIKE RAYCAST OR SOMETHING
     //PLEASE REMEMBER TO READ THIS
 
     public float movementSpeed;
     public float movementUp;
     public Rigidbody2D rb;
+    public BoxCollider2D col;
     public bool isNotAtCliff;
     public bool isGrounded;
     public bool nearWall;
@@ -37,7 +38,9 @@ public class NormalEnemyScript : MonoBehaviour
     {
         if(died)
         {
+            col.enabled = false;
             movementSpeed = 0;
+            rb.gravityScale = 0;
             animator.enabled = false;
             StartCoroutine(PlayParticleSystem());
             died = false;

@@ -1,16 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
+
 public class BossScript : MonoBehaviour
 {
+    public static BossScript instance;
     public BossPhase currentPhase;
+
+    public Animator animator;
 
     public GameObject spikeGroup;
     public GameObject[] spikes;
     public GameObject warningSign;
     public GameObject[] lasers;
+    public GameObject normalEnemy;
+
+    public BoxCollider2D[] leftMidRight;
+    public List<Transform> spawnPoints;
 
     public float timer;
     public float waitingTimeForWarningSign;
@@ -18,13 +27,26 @@ public class BossScript : MonoBehaviour
     public Color tmpColor;
     public Color tmpWarningColor;
 
+    public bool startAttack;
     public bool startPattern;
+    public bool dead = false;
+    public bool firstTimeFight = true;
+    public bool finishPhase;
+
     public enum BossPhase
     {
+        Intro,
         Phase1,
         Phase2,
-        Phase3
+        Phase3,
+        Dead
     };
+    private void Awake()
+    {
+        instance = this;
+        animator = GetComponent<Animator>();
+
+    }
     void Start()
     {
         currentPhase = BossPhase.Phase1;
@@ -35,11 +57,36 @@ public class BossScript : MonoBehaviour
     {
         switch (currentPhase)
         {
-            case BossPhase.Phase1:
+            case BossPhase.Intro:
+                transform.GetComponent<SpriteRenderer>().enabled = true;
+                transform.GetComponent<Animator>().enabled = true;
+                StartCoroutine(nameof(StartAttack));
+                if (startAttack)
+                {
+                    currentPhase = BossPhase.Phase1;
+                }
+                break;
 
+            case BossPhase.Phase1:
+                while (!finishPhase)
+                {
+                    StartCoroutine(nameof(WherePlayer)); //Check player pos
+                    StartCoroutine(WaitxSeconds(0.7f)); // Spawn on player pos on delay so that player is away from it
+
+                    foreach (Transform spawnPoint in spawnPoints)
+                    {
+                        Instantiate(normalEnemy, spawnPoint.position, Quaternion.identity); //spawn enemy on player previous pos
+                    }
+                    spawnPoints.Clear(); //Clear
+                    StartCoroutine(WaitxSeconds(2f)); //Give player x amount of time to kill enemy before spawning 
+                                                        //Maybe Im supposed to summon the boss down so that the player can fight?
+
+                }
+                if (finishPhase) currentPhase = BossPhase.Phase2;
                 break;
 
             case BossPhase.Phase2:
+                finishPhase = false;
                 spikeGroup.SetActive(true);
 
                 if (startPattern)
@@ -48,12 +95,19 @@ public class BossScript : MonoBehaviour
                     startPattern = false;
                 }
 
-
+                if (finishPhase) currentPhase = BossPhase.Phase3;
                 break;
 
-                case BossPhase.Phase3:
+            case BossPhase.Phase3:
+                finishPhase = false;
                 StartCoroutine(LaserAppear());
 
+                if (finishPhase) currentPhase = BossPhase.Dead;
+                break;
+            case BossPhase.Dead:
+                dead = true;
+                transform.GetComponent<SpriteRenderer>().enabled = false;
+                //Play dead animation
                 break;
         }
     }
@@ -101,9 +155,7 @@ public class BossScript : MonoBehaviour
 
     IEnumerator LaserAppear() //Start Attack Phase 3
     {
-        int x;
-        x = 0;
-        lasers[x].gameObject.SetActive(true);
+        lasers[0].SetActive(true);
         yield return new WaitForSeconds(2f);
         StartCoroutine(LaserConverge());
     }
@@ -127,5 +179,28 @@ public class BossScript : MonoBehaviour
     {
         //Laser Collide with Player
         yield return null;
+    }
+
+    IEnumerator StartAttack()
+    {
+        animator.SetTrigger("Idle");
+        firstTimeFight = true;
+        //play intro or smth
+        yield return new WaitForSeconds(2f);
+        startAttack = true;
+    }
+
+    IEnumerator WherePlayer()
+    {
+        foreach (BoxCollider2D col in leftMidRight)
+        {
+            col.enabled = true; 
+            yield return null;
+            col.enabled = false;
+        } 
+    }
+    IEnumerator WaitxSeconds(float x)
+    {
+        yield return new WaitForSeconds(x);
     }
 }

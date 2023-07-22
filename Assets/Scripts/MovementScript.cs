@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEditor;
 
+// IDK WHY BUT I LITERALLY DECIDED TO MAKE MOVEMENTSCRIPT PERMANENTLY ON FROM THE GRAPPLING SCRIPT. PLEASE GO AND FIX IT WHEN HAVE TIME.
 public class MovementScript : MonoBehaviour
 {
     public Rigidbody2D rb2d;
@@ -73,7 +74,7 @@ public class MovementScript : MonoBehaviour
 #if UNITY_STANDALONE_WIN
     private void Update()
     {
-        Debug.Log(rb2d.velocity);
+        //Debug.Log(rb2d.velocity);
         if (TmpCollider.instance.isCollidedThisFrame)
         {
             rb2d.velocity = Vector2.zero;

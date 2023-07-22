@@ -4,13 +4,10 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
-
-    //PLEASE DO THE IMMORTAL TIME AFTER GET HIT THINGY
-
     public static PlayerScript playerScriptStatic;
     public MovementScript movementScript;
-    public int hp;
-    public int coin;
+    public int hp = 3;
+    public int coin = 0;
     public int hpMax;
     private void Awake()
     {
@@ -19,18 +16,14 @@ public class PlayerScript : MonoBehaviour
     }
     void Start()
     {
-        hpMax = 3;
         hp = hpMax;
-        coin = 0;
     }
-
-    // Update is called once per frame
     void Update()
     {
         if (hp <= 0)
         {
             hp = 0;
-            LevelResetManager.instance.reset = true;
+            //LevelResetManager.instance.reset = true;
         }
         if (hp > hpMax)
         {

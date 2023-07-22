@@ -9,8 +9,9 @@ public class Parallax : MonoBehaviour
     public Vector3 _previousCameraPosition;
     public Transform _camera;
     public Vector3 _targetPosition;
+    public float magicalNumber = 20f;
 
-    public float ParallaxAmount => 20f - _lagAmount;
+    public float ParallaxAmount => magicalNumber - _lagAmount; //Change this magical number to change the parallax amount
 
     private void Awake()
     {

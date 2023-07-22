@@ -13,10 +13,10 @@ public class MovingSpikeBlock : MonoBehaviour
     {
         wayPointGroup = transform.GetChild(0).gameObject;
         wayPointGroup.transform.parent = null;
-
     }
     void Update()
     {
+
         if (Vector3.Distance(transform.position, patrolPoints[currentWaypoint].position) <= 0.02f)
         {
             currentWaypoint += 1;

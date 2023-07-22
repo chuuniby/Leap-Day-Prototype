@@ -40,7 +40,7 @@ public class GrapplingScript : MonoBehaviour
         }
         else
         {
-            player.GetComponent<MovementScript>().enabled = true;
+            player.GetComponent<MovementScript>().enabled = true; //WAS I FUCKING CRAZY????????
         }
 
         if (isGrapplingJump)
