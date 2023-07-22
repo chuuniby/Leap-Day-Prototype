@@ -33,6 +33,8 @@ public class BossScript : MonoBehaviour
     public bool firstTimeFight = true;
     public bool finishPhase;
 
+
+
     public enum BossPhase
     {
         Intro,
@@ -68,20 +70,12 @@ public class BossScript : MonoBehaviour
                 break;
 
             case BossPhase.Phase1:
-                while (!finishPhase)
-                {
                     StartCoroutine(nameof(WherePlayer)); //Check player pos
-                    StartCoroutine(WaitxSeconds(0.7f)); // Spawn on player pos on delay so that player is away from it
-
-                    foreach (Transform spawnPoint in spawnPoints)
-                    {
-                        Instantiate(normalEnemy, spawnPoint.position, Quaternion.identity); //spawn enemy on player previous pos
-                    }
                     spawnPoints.Clear(); //Clear
                     StartCoroutine(WaitxSeconds(2f)); //Give player x amount of time to kill enemy before spawning 
                                                         //Maybe Im supposed to summon the boss down so that the player can fight?
 
-                }
+                
                 if (finishPhase) currentPhase = BossPhase.Phase2;
                 break;
 
@@ -197,7 +191,13 @@ public class BossScript : MonoBehaviour
             col.enabled = true; 
             yield return null;
             col.enabled = false;
-        } 
+            
+        }
+        StartCoroutine(WaitxSeconds(0.7f)); // Spawn on player pos on delay so that player is away from it
+        foreach (Transform spawnPoint in spawnPoints)
+        {
+            Instantiate(normalEnemy, spawnPoint.position, Quaternion.identity); //spawn enemy on player previous pos
+        }
     }
     IEnumerator WaitxSeconds(float x)
     {

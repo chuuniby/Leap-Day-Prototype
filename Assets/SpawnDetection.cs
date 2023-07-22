@@ -11,6 +11,7 @@ public class SpawnDetection : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             BossScript.instance.spawnPoints.Add(transform.GetChild(0));
+            Debug.Log("shoot");
         }
     }
 }
