@@ -5,13 +5,18 @@ using UnityEngine;
 
 public class SpawnDetection : MonoBehaviour
 {
-    
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        //BossScript.instance.spawnPoints.Clear(); //Clear
         if (collision.CompareTag("Player"))
         {
-            BossScript.instance.spawnPoints.Add(transform.GetChild(0));
+            foreach(BoxCollider2D col in BossScript.instance.leftMidRight)
+            {
+                col.enabled = false;
+            }
+            BossScript.instance.spawnPoints.Add(transform.GetChild(0).gameObject);
             Debug.Log("shoot");
+            BossScript.instance.StartCoroutine("SpawnEnemy");
         }
     }
 }

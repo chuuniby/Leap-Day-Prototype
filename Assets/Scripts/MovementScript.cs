@@ -280,6 +280,23 @@ public class MovementScript : MonoBehaviour
     public TextMeshProUGUI text;
     private void Update()
     {
+        if ((Input.GetMouseButtonDown(0))){
+            if (isGrounded)
+            {
+                jumpCount++;
+                animator.SetBool("AnimationJumping", true);
+                rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
+            }
+            else
+            {
+                if (doubleJump && !isWallSliding)
+                {
+                    //animator.SetBool("AnimationJumping", true);
+                    rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
+                    jumpCount++;
+                }
+            }
+        }
         //text.text = direction;
         if (Input.touchCount > 0)
         {
@@ -302,21 +319,7 @@ public class MovementScript : MonoBehaviour
             if (Mathf.Abs(x) == 0 && Mathf.Abs(y) == 0)
             {
                 direction = "Tapped";
-                if (isGrounded)
-                {
-                    jumpCount++;
-                    animator.SetBool("AnimationJumping", true);
-                    rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
-                }
-                else
-                {
-                    if (doubleJump && !isWallSliding)
-                    {
-                        //animator.SetBool("AnimationJumping", true);
-                        rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
-                        jumpCount++;
-                    }
-                }
+                
 
             }
             else if (Mathf.Abs(x) > Mathf.Abs(y))

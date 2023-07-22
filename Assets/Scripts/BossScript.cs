@@ -17,9 +17,10 @@ public class BossScript : MonoBehaviour
     public GameObject warningSign;
     public GameObject[] lasers;
     public GameObject normalEnemy;
+    public GameObject _prefabEnemy;
 
     public BoxCollider2D[] leftMidRight;
-    public List<Transform> spawnPoints;
+    public List<GameObject> spawnPoints;
 
     public float timer;
     public float waitingTimeForWarningSign;
@@ -32,6 +33,7 @@ public class BossScript : MonoBehaviour
     public bool dead = false;
     public bool firstTimeFight = true;
     public bool finishPhase;
+    public bool checkPhase1;
 
 
 
@@ -51,7 +53,7 @@ public class BossScript : MonoBehaviour
     }
     void Start()
     {
-        currentPhase = BossPhase.Phase1;
+        currentPhase = BossPhase.Intro;
         tmpColor = new Color(255f,0f,0f,0f);
     }
 
@@ -70,17 +72,28 @@ public class BossScript : MonoBehaviour
                 break;
 
             case BossPhase.Phase1:
-                    StartCoroutine(nameof(WherePlayer)); //Check player pos
-                    spawnPoints.Clear(); //Clear
-                    StartCoroutine(WaitxSeconds(2f)); //Give player x amount of time to kill enemy before spawning 
-                                                        //Maybe Im supposed to summon the boss down so that the player can fight?
 
-                
+                //Debug.Log("Hit update");
+
+                //StartCoroutine(nameof(WherePlayer)); //Check player pos
+                //    spawnPoints.Clear(); //Clear
+                //    StartCoroutine(WaitxSeconds(2f)); //Give player x amount of time to kill enemy before spawning 
+                //                                        //Maybe Im supposed to summon the boss down so that the player can fight?
+
+
+                //if (finishPhase) currentPhase = BossPhase.Phase2;
+
+                if (_prefabEnemy == null && checkPhase1 == true)
+                {
+                    finishPhase = true;
+                }
+
                 if (finishPhase) currentPhase = BossPhase.Phase2;
                 break;
 
             case BossPhase.Phase2:
                 finishPhase = false;
+                warningSign.SetActive(true);
                 spikeGroup.SetActive(true);
 
                 if (startPattern)
@@ -184,20 +197,14 @@ public class BossScript : MonoBehaviour
         startAttack = true;
     }
 
-    IEnumerator WherePlayer()
+    public IEnumerator SpawnEnemy()
     {
-        foreach (BoxCollider2D col in leftMidRight)
+        yield return new WaitForSeconds(1f);
+        foreach (GameObject spawnPoint in spawnPoints)
         {
-            col.enabled = true; 
-            yield return null;
-            col.enabled = false;
-            
+            _prefabEnemy = Instantiate(normalEnemy, spawnPoint.transform.position, Quaternion.identity); //spawn enemy on player previous pos
         }
-        StartCoroutine(WaitxSeconds(0.7f)); // Spawn on player pos on delay so that player is away from it
-        foreach (Transform spawnPoint in spawnPoints)
-        {
-            Instantiate(normalEnemy, spawnPoint.position, Quaternion.identity); //spawn enemy on player previous pos
-        }
+        checkPhase1 = true;
     }
     IEnumerator WaitxSeconds(float x)
     {
