@@ -25,6 +25,8 @@ public class BossScript : MonoBehaviour
     public float timer;
     public float waitingTimeForWarningSign;
 
+    public int phase2Count = 3;
+
     public Color tmpColor;
     public Color tmpWarningColor;
 
@@ -34,11 +36,13 @@ public class BossScript : MonoBehaviour
     public bool firstTimeFight = true;
     public bool finishPhase;
     public bool checkPhase1;
+    public bool spawnDetectionScriptOn;
 
 
 
     public enum BossPhase
     {
+        Null,
         Intro,
         Phase1,
         Phase2,
@@ -53,7 +57,7 @@ public class BossScript : MonoBehaviour
     }
     void Start()
     {
-        currentPhase = BossPhase.Intro;
+        currentPhase = BossPhase.Null;
         tmpColor = new Color(255f,0f,0f,0f);
     }
 
@@ -63,12 +67,8 @@ public class BossScript : MonoBehaviour
         {
             case BossPhase.Intro:
                 transform.GetComponent<SpriteRenderer>().enabled = true;
-                transform.GetComponent<Animator>().enabled = true;
+                transform.GetComponent<Animator>().enabled = true;  //Start the landing animation for the boss
                 StartCoroutine(nameof(StartAttack));
-                if (startAttack)
-                {
-                    currentPhase = BossPhase.Phase1;
-                }
                 break;
 
             case BossPhase.Phase1:
@@ -101,11 +101,16 @@ public class BossScript : MonoBehaviour
                     StartCoroutine(SpikeFade());
                     startPattern = false;
                 }
-
+                if(phase2Count == 0)
+                {
+                    finishPhase = true;
+                }
                 if (finishPhase) currentPhase = BossPhase.Phase3;
                 break;
 
             case BossPhase.Phase3:
+                warningSign.SetActive(false);
+                spikeGroup.SetActive(false);
                 finishPhase = false;
                 StartCoroutine(LaserAppear());
 
@@ -145,9 +150,9 @@ public class BossScript : MonoBehaviour
 
                 tmpColor.a = 1f;
                 spike.GetComponent<SpriteRenderer>().color = tmpColor;
-                spike.GetComponent<PolygonCollider2D>().enabled = false; //CHANGE THIS TO TRUE FOR REAL GAME SO THE SPIKE ACTUALLY DO DAMAGE
-
+                spike.GetComponent<PolygonCollider2D>().enabled = true; //CHANGE THIS TO TRUE FOR REAL GAME SO THE SPIKE ACTUALLY DO DAMAGE
             }
+            phase2Count--;
             yield return new WaitForSeconds(3f);
             StartCoroutine (SpikeFade());
         }
@@ -162,6 +167,7 @@ public class BossScript : MonoBehaviour
 
     IEnumerator LaserAppear() //Start Attack Phase 3
     {
+        yield return new WaitForSeconds(2f);
         lasers[0].SetActive(true);
         yield return new WaitForSeconds(2f);
         StartCoroutine(LaserConverge());
@@ -192,9 +198,14 @@ public class BossScript : MonoBehaviour
     {
         animator.SetTrigger("Idle");
         firstTimeFight = true;
-        //play intro or smth
+        //play intro like put name tag there with cool image or smth
         yield return new WaitForSeconds(2f);
         startAttack = true;
+        if (startAttack)
+        {
+            spawnDetectionScriptOn = true;
+            currentPhase = BossPhase.Phase1;
+        }
     }
 
     public IEnumerator SpawnEnemy()

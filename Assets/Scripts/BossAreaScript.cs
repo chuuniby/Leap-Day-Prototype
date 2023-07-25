@@ -12,7 +12,7 @@ public class BossAreaScript : MonoBehaviour
         if (collision.transform.CompareTag("Player"))
         {
             timer -= Time.deltaTime;
-              if(timer < 0)
+            if (timer < 0)
             {
                 cam.GetComponent<Shake>().StartCoroutine(MethodName);
                 BossScript.instance.currentPhase = BossScript.BossPhase.Intro;

@@ -28,7 +28,7 @@ public class GrapplingScript : MonoBehaviour
         {
             //player.GetComponent<MovementScript>().movementSpeed = 0f;
             //player.GetComponent<MovementScript>().movementUp = 0f;
-            player.GetComponent<MovementScript>().enabled = false; //this doesnt help with why the player does not end up at where the indicator of the grappling is
+            //player.GetComponent<MovementScript>().enabled = false; //this doesnt help with why the player does not end up at where the indicator of the grappling is
             canGrapple = false;
             player.GetComponent<Rigidbody2D>().AddForce(grapplingForce * Time.fixedDeltaTime * grapplingDir); //Dont get component in update
 
@@ -38,10 +38,10 @@ public class GrapplingScript : MonoBehaviour
                 isGrapplingJump = true;
             }
         }
-        else
-        {
-            player.GetComponent<MovementScript>().enabled = true; //WAS I FUCKING CRAZY????????
-        }
+        //else
+        //{
+        //    player.GetComponent<MovementScript>().enabled = true; //WAS I FUCKING CRAZY???????? now the movementscript cannot be disabled lmao
+        //}
 
         if (isGrapplingJump)
         {
