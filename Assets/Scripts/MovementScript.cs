@@ -74,6 +74,7 @@ public class MovementScript : MonoBehaviour
 #if UNITY_STANDALONE_WIN
     private void Update()
     {
+        rb2d.velocity = new Vector2(0f,Mathf.Clamp(rb2d.velocity.y, -gravity.y * fallMultiplier, jumpForce));
         //Debug.Log(rb2d.velocity);
         if (TmpCollider.instance.isCollidedThisFrame)
         {

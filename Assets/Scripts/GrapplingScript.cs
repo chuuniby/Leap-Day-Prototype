@@ -16,6 +16,7 @@ public class GrapplingScript : MonoBehaviour
     public bool isGrappling;
     public RaycastHit2D hit;
     public float offset;
+    public float maxGrapplingSpeed;
 
     public Vector2 grapplingDir;
     public float grapplingForce;
@@ -29,6 +30,8 @@ public class GrapplingScript : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        rb2D.velocity = new Vector2(0f, Mathf.Clamp(rb2D.velocity.y, 0f, maxGrapplingSpeed));
+        Debug.Log(rb2D.velocity);
         if (movementScript.isWallSliding)
         {
             canGrapple = false;
@@ -40,8 +43,7 @@ public class GrapplingScript : MonoBehaviour
             animator.enabled = false;
             rb2D.AddForce(grapplingForce * Time.fixedDeltaTime * grapplingDir); //Dont get component in update //5000f for grappling force
             float distance = (hit.point.y + offset)- transform.position.y;
-            Debug.Log(distance);
-            if(distance <= 0.01f)
+            if(distance <= 0.001f)
             {
                 movementScript.enabled = true;
                 animator.enabled = true;
@@ -56,8 +58,6 @@ public class GrapplingScript : MonoBehaviour
                 animator.enabled = true;
                 isGrappling = false;
                 movementScript.GrapplingJump();
-
-                //old code pls make the new one when player jump stop the grappling instead
             }
         }
         //else
@@ -128,8 +128,8 @@ public class GrapplingScript : MonoBehaviour
         {
             //grapple
             //Debug.Log(hit.point);
-
             isGrappling = true;
+
             Destroy(_gizmoLine);
         }
     }

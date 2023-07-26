@@ -1453,6 +1453,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 3986139825158889139, guid: 2d16f3c1d286f5540851c2aa36ba1b07, type: 3}
+    - target: {fileID: 3211654456616572769, guid: fd4d66f14340a1348b52741be4acda00, type: 3}
+      propertyPath: m_TagString
+      value: LevelSeperation
+      objectReference: {fileID: 0}
     - target: {fileID: 5168698258718860613, guid: fd4d66f14340a1348b52741be4acda00, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -6668,7 +6672,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6621955770835172507, guid: 55ed0da70a0b94448af44b230063ed5b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.19
+      value: 27.83
       objectReference: {fileID: 0}
     - target: {fileID: 6621955770835172507, guid: 55ed0da70a0b94448af44b230063ed5b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -6706,14 +6710,6 @@ PrefabInstance:
       propertyPath: cam
       value: 
       objectReference: {fileID: 641629427}
-    - target: {fileID: 7600245104401257357, guid: 55ed0da70a0b94448af44b230063ed5b, type: 3}
-      propertyPath: offset
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7600245104401257357, guid: 55ed0da70a0b94448af44b230063ed5b, type: 3}
-      propertyPath: grapplingForce
-      value: 5000
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 55ed0da70a0b94448af44b230063ed5b, type: 3}
 --- !u!114 &7600245104401257357 stripped

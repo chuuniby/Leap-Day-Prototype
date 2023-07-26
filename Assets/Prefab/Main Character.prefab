@@ -601,7 +601,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24e9b416d1ad538488dc183331c10bd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 6535992159967999611}
+  movementScript: {fileID: 0}
+  animator: {fileID: 0}
+  rb2D: {fileID: 0}
   gizmoLine: {fileID: 2437259328593140287, guid: 0149cbf4966a9c4458c8702ce40c92b0, type: 3}
   _gizmoLine: {fileID: 0}
   drawPosition: {fileID: 1798412933}
@@ -611,8 +613,10 @@ MonoBehaviour:
   isHolding: 0
   canGrapple: 0
   isGrappling: 0
+  offset: 1.5
+  maxGrapplingSpeed: 20
   grapplingDir: {x: 0, y: 0}
-  grapplingForce: 0
+  grapplingForce: 5000
   isGrapplingJump: 0
 --- !u!114 &7600245104401257364
 MonoBehaviour:
