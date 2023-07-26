@@ -24,6 +24,8 @@ public class GrapplingScript : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        Debug.Log("grappling dir: " + grapplingDir.normalized);
+        Debug.Log(hit.transform.name);
         if (isGrappling)    //GrapplingCode
         {
             //player.GetComponent<MovementScript>().movementSpeed = 0f;
@@ -31,11 +33,14 @@ public class GrapplingScript : MonoBehaviour
             //player.GetComponent<MovementScript>().enabled = false; //this doesnt help with why the player does not end up at where the indicator of the grappling is
             canGrapple = false;
             player.GetComponent<Rigidbody2D>().AddForce(grapplingForce * Time.fixedDeltaTime * grapplingDir); //Dont get component in update
+            //player.transform.position = Vector3.Lerp(player.transform.position, hit.point, Time.deltaTime * player.GetComponent<MovementScript>().movementSpeed * Time.deltaTime);
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space))   
             {
                 player.GetComponent<MovementScript>().enabled = true;
                 isGrapplingJump = true;
+
+                //old code pls make the new one when player jump stop the grappling instead
             }
         }
         //else
@@ -53,12 +58,12 @@ public class GrapplingScript : MonoBehaviour
 
     private void Update()
     {
-        Debug.DrawRay(drawPosition.position, new Vector3(player.transform.localScale.x, 6f));
+        Debug.DrawRay(drawPosition.position, Vector2.up);
         //Debug.DrawRay(drawPosition.position, grapplingDir,Color.red); //Draw Direction of grappling
         if (isHolding)
         {
-            hit = Physics2D.Raycast(drawPosition.position, new Vector3(player.transform.localScale.x, 6f), 6f, ~playerLayerMask);
-            if (Physics2D.Raycast(drawPosition.position, new Vector3(player.transform.localScale.x, 6f), 6f))
+            hit = Physics2D.Raycast(drawPosition.position, Vector2.up, Mathf.Infinity, ~playerLayerMask);
+            if (/*Physics2D.Raycast(drawPosition.position, new Vector3(player.transform.localScale.x, 0f), Mathf.Infinity)*/ hit )
             {
                 if (hit.transform == null)
                 {
@@ -67,7 +72,7 @@ public class GrapplingScript : MonoBehaviour
                     _gizmoLine.GetComponent<LineRenderer>().endColor = Color.red;
                     canGrapple = false;
                 }
-                else if (hit.transform.CompareTag("Platform"))
+                else if (hit.transform.CompareTag("LevelSeperation"))
                 {
                     grapplingDir = new Vector2(hit.point.x - player.transform.position.x, hit.point.y - player.transform.position.y).normalized;
                     //Debug.Log(hit.transform.gameObject.name);
