@@ -31,7 +31,6 @@ public class GrapplingScript : MonoBehaviour
     private void FixedUpdate()
     {
         rb2D.velocity = new Vector2(0f, Mathf.Clamp(rb2D.velocity.y, 0f, maxGrapplingSpeed));
-        Debug.Log(rb2D.velocity);
         if (movementScript.isWallSliding)
         {
             canGrapple = false;
