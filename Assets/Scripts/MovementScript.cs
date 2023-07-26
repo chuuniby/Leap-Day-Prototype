@@ -245,8 +245,7 @@ public class MovementScript : MonoBehaviour
     public void GrapplingJump()
     {
         animator.SetBool("AnimationJumping", true);
-        rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
-        rb2d.AddForce(new Vector2(movementSpeed * 5, jumpForce / 10));
+        rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
     }
 
     //private void OnCollisionEnter2D(Collision2D collision)

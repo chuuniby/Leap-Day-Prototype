@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class GrapplingScript : MonoBehaviour
 {
-    public GameObject player;
+    public MovementScript movementScript;
+    public Animator animator;
+    public Rigidbody2D rb2D;
     public GameObject gizmoLine;
     public GameObject _gizmoLine;
     public Transform drawPosition;
@@ -13,32 +15,47 @@ public class GrapplingScript : MonoBehaviour
     public bool canGrapple;
     public bool isGrappling;
     public RaycastHit2D hit;
+    public float offset;
 
     public Vector2 grapplingDir;
     public float grapplingForce;
     public bool isGrapplingJump;
 
-    private void Start()
+    private void Awake()
     {
-        grapplingForce = 3000f;
+        movementScript = transform.GetComponent<MovementScript>();
+        animator = transform.GetComponent<Animator>();
+        rb2D = transform.GetComponent<Rigidbody2D>();
     }
     private void FixedUpdate()
     {
-        Debug.Log("grappling dir: " + grapplingDir.normalized);
-        Debug.Log(hit.transform.name);
+        if (movementScript.isWallSliding)
+        {
+            canGrapple = false;
+        }
+
         if (isGrappling)    //GrapplingCode
         {
-            //player.GetComponent<MovementScript>().movementSpeed = 0f;
-            //player.GetComponent<MovementScript>().movementUp = 0f;
-            //player.GetComponent<MovementScript>().enabled = false; //this doesnt help with why the player does not end up at where the indicator of the grappling is
-            canGrapple = false;
-            player.GetComponent<Rigidbody2D>().AddForce(grapplingForce * Time.fixedDeltaTime * grapplingDir); //Dont get component in update
-            //player.transform.position = Vector3.Lerp(player.transform.position, hit.point, Time.deltaTime * player.GetComponent<MovementScript>().movementSpeed * Time.deltaTime);
-
-            if (Input.GetKeyDown(KeyCode.Space))   
+            movementScript.enabled = false;
+            animator.enabled = false;
+            rb2D.AddForce(grapplingForce * Time.fixedDeltaTime * grapplingDir); //Dont get component in update //5000f for grappling force
+            float distance = (hit.point.y + offset)- transform.position.y;
+            Debug.Log(distance);
+            if(distance <= 0.01f)
             {
-                player.GetComponent<MovementScript>().enabled = true;
-                isGrapplingJump = true;
+                movementScript.enabled = true;
+                animator.enabled = true;
+                isGrappling = false;
+                isGrapplingJump = false;
+            }
+            //player.transform.position = Vector2.Lerp(player.transform.position, hit.point, grapplingForce * Time.fixedDeltaTime);
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                movementScript.enabled = true;
+                animator.enabled = true;
+                isGrappling = false;
+                movementScript.GrapplingJump();
 
                 //old code pls make the new one when player jump stop the grappling instead
             }
@@ -48,12 +65,12 @@ public class GrapplingScript : MonoBehaviour
         //    player.GetComponent<MovementScript>().enabled = true; //WAS I FUCKING CRAZY???????? now the movementscript cannot be disabled lmao
         //}
 
-        if (isGrapplingJump)
-        {
-            isGrappling = false;
-            player.GetComponent<MovementScript>().GrapplingJump(); //Dont get component in update
-            //Find a way to stop GrapplingJump after hit a wall or landed or afterGraplingJump
-        }
+        //if (isGrapplingJump)
+        //{
+        //    isGrappling = false;
+        //    player.GetComponent<MovementScript>().GrapplingJump(); //Dont get component in update
+        //    //Find a way to stop GrapplingJump after hit a wall or landed or afterGraplingJump
+        //}
     }
 
     private void Update()
@@ -67,22 +84,19 @@ public class GrapplingScript : MonoBehaviour
             {
                 if (hit.transform == null)
                 {
-
                     _gizmoLine.GetComponent<LineRenderer>().startColor = Color.red;
                     _gizmoLine.GetComponent<LineRenderer>().endColor = Color.red;
                     canGrapple = false;
                 }
                 else if (hit.transform.CompareTag("LevelSeperation"))
                 {
-                    grapplingDir = new Vector2(hit.point.x - player.transform.position.x, hit.point.y - player.transform.position.y).normalized;
-                    //Debug.Log(hit.transform.gameObject.name);
+                    grapplingDir = new Vector2(0f, hit.point.y - transform.position.y + offset).normalized;
                     _gizmoLine.GetComponent<LineRenderer>().startColor = Color.green;
                     _gizmoLine.GetComponent<LineRenderer>().endColor = Color.green;
                     canGrapple = true;
                 }
                 else
                 {
-                    //Debug.Log(hit.transform.gameObject.name);
                     _gizmoLine.GetComponent<LineRenderer>().startColor = Color.red;
                     _gizmoLine.GetComponent<LineRenderer>().endColor = Color.red;
                     canGrapple = false;
@@ -94,9 +108,9 @@ public class GrapplingScript : MonoBehaviour
     public void DrawGizmos()
     {
         _gizmoLine = Instantiate(gizmoLine, drawPosition.position, Quaternion.identity);
-        Vector3 localscale = player.transform.localScale;
+        Vector3 localscale = transform.localScale;
         _gizmoLine.transform.localScale = localscale;
-        _gizmoLine.transform.SetParent(player.transform);
+        _gizmoLine.transform.SetParent(transform);
     }
     public void IsHoldingButton()
     {
@@ -119,13 +133,15 @@ public class GrapplingScript : MonoBehaviour
             Destroy(_gizmoLine);
         }
     }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.transform.CompareTag("Platform"))
-        {
-            isGrappling = false;
-            isGrapplingJump = false;
-        }
-    }
+    //private void OnCollisionExit2D(Collision2D collision)
+    //{
+    //    if (isGrappling)
+    //    {
+    //        if (collision.transform.CompareTag("LevelSeperation"))
+    //        {
+    //            isGrappling = false;
+    //            isGrapplingJump = false;
+    //        }
+    //    }
+    //}
 }
