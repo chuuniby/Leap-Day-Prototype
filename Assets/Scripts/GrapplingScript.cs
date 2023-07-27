@@ -17,6 +17,7 @@ public class GrapplingScript : MonoBehaviour
     public RaycastHit2D hit;
     public float offset;
     public float maxGrapplingSpeed;
+    public Camera cam;
 
     public Vector2 grapplingDir;
     public float grapplingForce;
@@ -30,7 +31,6 @@ public class GrapplingScript : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        rb2D.velocity = new Vector2(0f, Mathf.Clamp(rb2D.velocity.y, 0f, maxGrapplingSpeed));
         if (movementScript.isWallSliding)
         {
             canGrapple = false;
@@ -38,6 +38,7 @@ public class GrapplingScript : MonoBehaviour
 
         if (isGrappling)    //GrapplingCode
         {
+            rb2D.velocity = new Vector2(0f, Mathf.Clamp(rb2D.velocity.y, 0f, maxGrapplingSpeed));
             movementScript.enabled = false;
             animator.enabled = false;
             rb2D.AddForce(grapplingForce * Time.fixedDeltaTime * grapplingDir); //Dont get component in update //5000f for grappling force
@@ -49,7 +50,9 @@ public class GrapplingScript : MonoBehaviour
                 isGrappling = false;
                 isGrapplingJump = false;
             }
-            //player.transform.position = Vector2.Lerp(player.transform.position, hit.point, grapplingForce * Time.fixedDeltaTime);
+            cam.transform.position = Vector3.Lerp(new Vector3(cam.transform.position.x, cam.transform.position.y, cam.transform.position.z),
+    new Vector3(cam.transform.position.x, transform.position.y + 5f, transform.position.z - 18f), 2.2f * Time.deltaTime);
+
 
             if (Input.GetKeyDown(KeyCode.Space))
             {

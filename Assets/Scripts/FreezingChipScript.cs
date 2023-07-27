@@ -10,15 +10,36 @@ public class FreezingChipScript : MonoBehaviour
     public GameObject minEnemy;
     public GameObject[] enemies;
 
+    public float enemyFreezingTime = 5f;
+    public float enemyFreezeTimer;
+    public bool startTimer = false;
+
     private void Start()
     {
         minDistance = Mathf.Infinity;
         minEnemy = null;
+        enemyFreezeTimer = enemyFreezingTime;
+    }
+
+    public void Update()
+    {
+        if(startTimer)
+        {
+            enemyFreezeTimer -= Time.deltaTime;
+            if(enemyFreezeTimer < 0)
+            {
+                //minEnemy.transform.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;    //unfreeze enemy
+                minEnemy.GetComponent<NormalEnemyScript>().freeze = false;
+                enemyFreezeTimer = enemyFreezingTime;
+                startTimer = false;
+            }
+        }
+
     }
 
     public void FindNearestEnemy()
     {
-        enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        enemies = GameObject.FindGameObjectsWithTag("Enemy");   //Only get enemy in player seeing range aka player can see
         foreach (GameObject enemy in enemies)
         {
             float distance = Vector3.Distance(transform.position, enemy.transform.position);
@@ -36,7 +57,9 @@ public class FreezingChipScript : MonoBehaviour
         if (minEnemy != null)
         {
             minEnemy.transform.tag = "Platform";
-            minEnemy.transform.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+            /*minEnemy.transform.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;*/       //freeze enemy
+            minEnemy.GetComponent<NormalEnemyScript>().freeze = true;
+            startTimer = true;
         }
     }
 }
