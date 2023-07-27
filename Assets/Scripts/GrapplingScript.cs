@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GrapplingScript : MonoBehaviour
@@ -22,6 +23,7 @@ public class GrapplingScript : MonoBehaviour
     public Vector2 grapplingDir;
     public float grapplingForce;
     public bool isGrapplingJump;
+    public bool hitPlatform;
 
     private void Awake()
     {
@@ -43,12 +45,13 @@ public class GrapplingScript : MonoBehaviour
             animator.enabled = false;
             rb2D.AddForce(grapplingForce * Time.fixedDeltaTime * grapplingDir); //Dont get component in update //5000f for grappling force
             float distance = (hit.point.y + offset)- transform.position.y;
-            if(distance <= 0.001f)
+            if(distance <= 0.001f || hitPlatform)
             {
                 movementScript.enabled = true;
                 animator.enabled = true;
                 isGrappling = false;
                 isGrapplingJump = false;
+                hitPlatform = false;
             }
             cam.transform.position = Vector3.Lerp(new Vector3(cam.transform.position.x, cam.transform.position.y, cam.transform.position.z),
     new Vector3(cam.transform.position.x, transform.position.y + 5f, transform.position.z - 18f), 2.2f * Time.deltaTime);
@@ -146,4 +149,12 @@ public class GrapplingScript : MonoBehaviour
     //        }
     //    }
     //}
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.transform.CompareTag("Wall") && isGrappling)
+        {
+            hitPlatform = true;
+        }
+    }
 }

@@ -8,7 +8,8 @@ public class FreezingChipScript : MonoBehaviour
 {
     public float minDistance;
     public GameObject minEnemy;
-    public GameObject[] enemies;
+    public List<GameObject> enemies;
+    //public GameObject minMovingBlock;
 
     public float enemyFreezingTime = 5f;
     public float enemyFreezeTimer;
@@ -39,27 +40,33 @@ public class FreezingChipScript : MonoBehaviour
 
     public void FindNearestEnemy()
     {
-        enemies = GameObject.FindGameObjectsWithTag("Enemy");   //Only get enemy in player seeing range aka player can see
-        foreach (GameObject enemy in enemies)
-        {
-            float distance = Vector3.Distance(transform.position, enemy.transform.position);
-            if(distance < minDistance)
-            {
-                minDistance = distance;
-                minEnemy = enemy;
-            }
-        }
+        enemies = transform.GetComponent<EnemyInFreezeRadius>().enemyInFreezeRadius;   //Only get enemy in player seeing range aka player can see
+        //foreach (GameObject enemy in enemies)   //old freezing, which get nearest enemy and pass it to FreezeEnemy();
+        //{
+        //    float distance = Vector3.Distance(transform.position, enemy.transform.position);
+        //    if(distance < minDistance)
+        //    {
+        //        minDistance = distance;
+        //        minEnemy = enemy;
+        //    }
+        //}
     }
-
     public void FreezeEnemy()
     {
         FindNearestEnemy();
-        if (minEnemy != null)
+        //if (minEnemy != null)     //old freezing, which get nearest enemy and freeze
+        //{
+        //    minEnemy.transform.tag = "Platform";
+        //    /*minEnemy.transform.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;*/       //freeze enemy
+        //    minEnemy.GetComponent<NormalEnemyScript>().freeze = true;
+        //    startTimer = true;
+        //}
+
+        foreach(GameObject enemy in enemies)
         {
-            minEnemy.transform.tag = "Platform";
-            /*minEnemy.transform.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;*/       //freeze enemy
-            minEnemy.GetComponent<NormalEnemyScript>().freeze = true;
-            startTimer = true;
+            enemy.transform.tag = "Platform";
+            enemy.GetComponent<NormalEnemyScript>().freeze = true;
         }
+        startTimer = true;
     }
 }

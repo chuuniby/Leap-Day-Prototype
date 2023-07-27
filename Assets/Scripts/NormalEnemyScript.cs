@@ -46,7 +46,7 @@ public class NormalEnemyScript : MonoBehaviour
         rb.velocity = new Vector2(movementSpeed, movementUp);
         isNotAtCliff = Physics2D.OverlapBox(cliffCheck.position, new Vector2(2f, 2f), 0f, groundLayer);
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, 2f, groundLayer);
-        nearWall = Physics2D.Raycast(transform.position, Vector2.right * transform.localScale, 2f, wallLayer);
+        nearWall = Physics2D.Raycast(transform.position, Vector2.right * transform.localScale, 1.7f, wallLayer);
 
         if (died)
         {
@@ -79,17 +79,6 @@ public class NormalEnemyScript : MonoBehaviour
         }
     }
 
-    //private void OnCollisionEnter2D(Collision2D collision)
-    //{
-    //    if (collision.transform.CompareTag("Wall"))
-    //    {
-    //        movementSpeed = -movementSpeed;
-    //        Vector3 localscale = transform.localScale;
-    //        localscale.x *= -1f;
-    //        transform.localScale = localscale;
-    //    }
-    //}
-
     IEnumerator PlayParticleSystem()
     {
         explosionParticleSystem.Play();
@@ -108,7 +97,9 @@ public class NormalEnemyScript : MonoBehaviour
         {
             movementSpeed = normalMovementSpeed * dir;
             rb.velocity = new Vector2(movementSpeed, movementUp);
-            animator.enabled = true;
+            rb.gravityScale = 8f;
+            rb.bodyType = RigidbodyType2D.Dynamic;
+            animator.Play("EnemyRunningAnimation");
             enemyWall.SetActive(false);
         }
 
@@ -116,8 +107,11 @@ public class NormalEnemyScript : MonoBehaviour
         //{
         if (freeze)
         {
+            
             movementSpeed = 0f;
-            animator.enabled = false;
+            rb.gravityScale = 0f;
+            rb.bodyType = RigidbodyType2D.Kinematic;
+            animator.Play("EnemyFreezeAnimation");
             enemyWall.SetActive(true);
             //}
         }

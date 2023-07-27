@@ -60,16 +60,24 @@ public class PlayerScript : MonoBehaviour
     {
         if (collision.transform.CompareTag("Enemy"))
         {
-            if (movementScript.rb2d.velocity.y >= 0)
+            if (collision.transform.GetComponent<NormalEnemyScript>().freeze)
             {
-                hp -= 1;
-                transform.position = LevelResetManager.instance.respawnPoint;
+                return;
             }
             else
             {
-                collision.transform.GetComponent<NormalEnemyScript>().died = true;
-            }
+                if (movementScript.rb2d.velocity.y >= 0)
+                {
+                    hp -= 1;
+                    transform.position = LevelResetManager.instance.respawnPoint;
+                }
+                else
+                {
+                    collision.transform.GetComponent<NormalEnemyScript>().died = true;
 
+                }
+
+            }
         }
     }
 }
