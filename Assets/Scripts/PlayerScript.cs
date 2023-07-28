@@ -23,7 +23,7 @@ public class PlayerScript : MonoBehaviour
         if (hp <= 0)
         {
             hp = 0;
-            //LevelResetManager.instance.reset = true;
+            LevelResetManager.instance.reset = true;
         }
         if (hp > hpMax)
         {

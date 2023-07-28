@@ -2,13 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManagerScript : MonoBehaviour
+public class CanvasScript : MonoBehaviour
 {
-    public static GameManagerScript instance;
-
+    public static CanvasScript instance;
     private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
         }
@@ -17,13 +16,5 @@ public class GameManagerScript : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
-    }
-
-    void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Escape))
-        {
-            Application.Quit();
-        }
     }
 }

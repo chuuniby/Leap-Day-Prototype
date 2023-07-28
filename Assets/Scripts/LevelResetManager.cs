@@ -10,6 +10,7 @@ public class LevelResetManager : MonoBehaviour
     //public Scene MainGameScene;
     public Vector2 respawnPoint;
     public GameObject player;
+    public string currentScene;
     private void Awake()
     {
         instance = this;
@@ -24,7 +25,8 @@ public class LevelResetManager : MonoBehaviour
     {
         if (reset) //player hp = 0 => reset
         {
-            SceneManager.LoadScene("MainGameScene");
+            currentScene = SceneManager.GetActiveScene().name;
+            SceneManager.LoadScene(currentScene);
             PlayerScript.playerScriptStatic.hp = PlayerScript.playerScriptStatic.hpMax;
             reset = false;
         }
