@@ -37,9 +37,8 @@ public class BossScript : MonoBehaviour
     public bool finishPhase;
     public bool checkPhase1;
     public bool spawnDetectionScriptOn;
-
-
-
+    public bool laserDoDamage;
+    public ParticleSystem.MainModule mainModule;
     public enum BossPhase
     {
         Null,
@@ -167,7 +166,7 @@ public class BossScript : MonoBehaviour
 
     IEnumerator LaserAppear() //Start Attack Phase 3
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(2f);        //give player break before start phase 3
         lasers[0].SetActive(true);
         yield return new WaitForSeconds(2f);
         StartCoroutine(LaserConverge());
@@ -182,6 +181,24 @@ public class BossScript : MonoBehaviour
                 laser.transform.GetComponentInChildren<LaserInfo>().top.transform.position += topDir * Time.deltaTime;
                 Vector3 botDir = laser.transform.GetComponentInChildren<LaserInfo>().mid.transform.position - laser.transform.GetComponentInChildren<LaserInfo>().bot.transform.position;
                 laser.transform.GetComponentInChildren<LaserInfo>().bot.transform.position += botDir * Time.deltaTime;
+
+                if (Vector2.Distance(laser.transform.GetComponentInChildren<LaserInfo>().top.transform.position, laser.transform.GetComponentInChildren<LaserInfo>().mid.transform.position) < 0.01)
+                {
+                    laserDoDamage = true;
+                }
+
+                if (laserDoDamage)
+                {
+                    var collision = laser.transform.GetComponentInChildren<LaserInfo>().mid.GetComponent<ParticleSystem>().collision;
+                    collision.enabled = true;
+                    laser.transform.GetComponentInChildren<LaserInfo>().top.SetActive(false);
+                    laser.transform.GetComponentInChildren<LaserInfo>().bot.SetActive(false);
+                    mainModule = laser.transform.GetComponentInChildren<LaserInfo>().mid.GetComponent<ParticleSystem>().main;
+                    mainModule.startSize = 1f;
+                    //mainModule.startSpeed = 17f; //supposed to make the laser go faster after change size but it didnt probably due to stopping and playing the particle system
+                    laser.transform.GetComponentInChildren<LaserInfo>().mid.GetComponent<ParticleSystem>().Stop();
+                    laser.transform.GetComponentInChildren<LaserInfo>().mid.GetComponent<ParticleSystem>().Play();
+                }
             }
         }
         yield return null;
@@ -190,7 +207,7 @@ public class BossScript : MonoBehaviour
 
     IEnumerator LaserAttack()
     {
-        //Laser Collide with Player
+
         yield return null;
     }
 

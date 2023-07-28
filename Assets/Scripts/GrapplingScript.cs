@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class GrapplingScript : MonoBehaviour
 {
@@ -21,9 +23,17 @@ public class GrapplingScript : MonoBehaviour
     public Camera cam;
 
     public Vector2 grapplingDir;
+    public Vector2 _grapplingDir;
     public float grapplingForce;
     public bool isGrapplingJump;
     public bool hitPlatform;
+
+    public Button grapplingButton;
+    public EventTrigger trigger;
+
+    public float coolDownGrappling = .5f;
+    public float timerGrappling;
+    public bool startCooldown;
 
     private void Awake()
     {
@@ -33,6 +43,18 @@ public class GrapplingScript : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if(startCooldown)
+        {
+            timerGrappling-= Time.fixedDeltaTime;
+            if(timerGrappling < 0 )
+            {
+                grapplingButton.interactable = true;
+                trigger.enabled = true;
+                timerGrappling = coolDownGrappling;
+                startCooldown = false;
+            }
+        }
+
         if (movementScript.isWallSliding)
         {
             canGrapple = false;
@@ -40,10 +62,12 @@ public class GrapplingScript : MonoBehaviour
 
         if (isGrappling)    //GrapplingCode
         {
+            grapplingButton.interactable = false;
+            trigger.enabled = false;
             rb2D.velocity = new Vector2(0f, Mathf.Clamp(rb2D.velocity.y, 0f, maxGrapplingSpeed));
             movementScript.enabled = false;
             animator.enabled = false;
-            rb2D.AddForce(grapplingForce * Time.fixedDeltaTime * grapplingDir); //Dont get component in update //5000f for grappling force
+            rb2D.AddForce(grapplingForce * Time.fixedDeltaTime * _grapplingDir); //Dont get component in update //5000f for grappling force
             float distance = (hit.point.y + offset)- transform.position.y;
             if(distance <= 0.001f || hitPlatform)
             {
@@ -52,9 +76,10 @@ public class GrapplingScript : MonoBehaviour
                 isGrappling = false;
                 isGrapplingJump = false;
                 hitPlatform = false;
+                startCooldown = true;
             }
             cam.transform.position = Vector3.Lerp(new Vector3(cam.transform.position.x, cam.transform.position.y, cam.transform.position.z),
-    new Vector3(cam.transform.position.x, transform.position.y + 5f, transform.position.z - 18f), 2.2f * Time.deltaTime);
+            new Vector3(cam.transform.position.x, transform.position.y + 5f, transform.position.z - 18f), 2.2f * Time.deltaTime);
 
 
             if (Input.GetKeyDown(KeyCode.Space))
@@ -88,6 +113,12 @@ public class GrapplingScript : MonoBehaviour
             if (/*Physics2D.Raycast(drawPosition.position, new Vector3(player.transform.localScale.x, 0f), Mathf.Infinity)*/ hit )
             {
                 if (hit.transform == null)
+                {
+                    _gizmoLine.GetComponent<LineRenderer>().startColor = Color.red;
+                    _gizmoLine.GetComponent<LineRenderer>().endColor = Color.red;
+                    canGrapple = false;
+                }
+                else if (movementScript.isWallSliding)
                 {
                     _gizmoLine.GetComponent<LineRenderer>().startColor = Color.red;
                     _gizmoLine.GetComponent<LineRenderer>().endColor = Color.red;
@@ -134,7 +165,7 @@ public class GrapplingScript : MonoBehaviour
             //grapple
             //Debug.Log(hit.point);
             isGrappling = true;
-
+            _grapplingDir = grapplingDir;
             Destroy(_gizmoLine);
         }
     }

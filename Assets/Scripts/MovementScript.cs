@@ -120,7 +120,7 @@ public class MovementScript : MonoBehaviour
             touchWall = false;
         }
 
-        if (jumpCount == 2)
+        if (jumpCount == 1)
         {
             doubleJump = false;
         }
@@ -128,6 +128,7 @@ public class MovementScript : MonoBehaviour
         if (isGrounded)
         {
             jumpCount = 0;
+            Debug.Log("jumpCount = 0");
             wallJumpCount = 0;
             doubleJump = true;
             TmpCollider.instance.tmpCol.enabled = true;
@@ -141,6 +142,8 @@ public class MovementScript : MonoBehaviour
             if (isGrounded)
             {
                 jumpCount++;
+                Debug.Log("JumpCount++");
+                Debug.Log(jumpCount);
                 animator.SetBool("AnimationJumping", true);
                 rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
             }
