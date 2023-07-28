@@ -14,6 +14,7 @@ public class FreezingChipScript : MonoBehaviour
     public float enemyFreezingTime = 5f;
     public float enemyFreezeTimer;
     public bool startTimer = false;
+    public GameObject freezeCheck;
 
     private void Start()
     {
@@ -40,7 +41,7 @@ public class FreezingChipScript : MonoBehaviour
 
     public void FindNearestEnemy()
     {
-        enemies = transform.GetComponent<EnemyInFreezeRadius>().enemyInFreezeRadius;   //Only get enemy in player seeing range aka player can see
+        enemies = freezeCheck.GetComponent<EnemyInFreezeRadius>().enemyInFreezeRadius;   //Only get enemy in player seeing range aka player can see
         //foreach (GameObject enemy in enemies)   //old freezing, which get nearest enemy and pass it to FreezeEnemy();
         //{
         //    float distance = Vector3.Distance(transform.position, enemy.transform.position);

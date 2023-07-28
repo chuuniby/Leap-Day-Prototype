@@ -3239,7 +3239,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1045284811, guid: 55ed0da70a0b94448af44b230063ed5b, type: 3}
   m_PrefabInstance: {fileID: 7600245104401257340}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1645982149}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e93dd2b431af9946b9fcccca6badbba, type: 3}
@@ -5112,6 +5112,11 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
+--- !u!1 &1645982149 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 328226553, guid: 55ed0da70a0b94448af44b230063ed5b, type: 3}
+  m_PrefabInstance: {fileID: 7600245104401257340}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1677921485 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6012526214520760367, guid: fd4d66f14340a1348b52741be4acda00, type: 3}
@@ -6821,6 +6826,10 @@ PrefabInstance:
       propertyPath: cam
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 7600245104401257364, guid: 55ed0da70a0b94448af44b230063ed5b, type: 3}
+      propertyPath: freezeCheck
+      value: 
+      objectReference: {fileID: 1645982149}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 55ed0da70a0b94448af44b230063ed5b, type: 3}
 --- !u!114 &7600245104401257357 stripped
