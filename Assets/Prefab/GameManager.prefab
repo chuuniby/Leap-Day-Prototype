@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2345781037201103376}
   - component: {fileID: 2345781037201103377}
   - component: {fileID: 2345781036215181999}
-  - component: {fileID: 2345781036215181984}
   - component: {fileID: 1765466627}
   - component: {fileID: 1765466628}
   m_Layer: 0
@@ -50,7 +49,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   reset: 0
   respawnPoint: {x: 0, y: 0}
-  player: {fileID: 6535992159967999611, guid: 55ed0da70a0b94448af44b230063ed5b, type: 3}
+  player: {fileID: 0}
+  currentScene: 
 --- !u!114 &2345781036215181999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,18 +64,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: 60
---- !u!114 &2345781036215181984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2345781037201103391}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 927861af8b2637149b8300c62c3a3c9c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1765466627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,6 +76,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3188fb3c2bc68304faabd5d699e82969, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHP: 1
+  currentCoin: 0
 --- !u!114 &1765466628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,3 +92,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unlockDockLevel: 0
   unlockTerraceHouseLevel: 0
+  unlockDockLevel2: 0

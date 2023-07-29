@@ -25,8 +25,7 @@ public class EnemyFollowPlatformScript : MonoBehaviour
     }
     private void Update()
     {
-        transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, enemyDirection);
-        transform.position += transform.right * movementSpeed * Time.deltaTime;
+        transform.SetPositionAndRotation(movementSpeed * Time.deltaTime * transform.right, Quaternion.Euler(transform.rotation.x, transform.rotation.y, enemyDirection));
         if (platformCollider != null)
         {
             if (Vector3.Distance(transform.position, verts[index]) < 0.05f)

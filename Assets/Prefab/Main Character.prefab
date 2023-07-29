@@ -602,9 +602,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementScript: {fileID: 0}
-  hp: 1
+  hp: 3
   coin: 0
-  hpMax: 1
+  hpMax: 3
 --- !u!114 &7600245104401257357
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -657,9 +657,6 @@ MonoBehaviour:
   minDistance: 0
   minEnemy: {fileID: 0}
   enemies: []
-  enemyFreezingTime: 5
-  enemyFreezeTimer: 0
-  startTimer: 0
   freezeCheck: {fileID: 328226553}
 --- !u!95 &7600245104401257366
 Animator:

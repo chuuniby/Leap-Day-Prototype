@@ -20,12 +20,6 @@ public class FreezingChipScript : MonoBehaviour
         minEnemy = null;
     }
 
-    public void Update()
-    {
-    
-
-    }
-
     public void FindNearestEnemy()
     {
         enemies = freezeCheck.GetComponent<EnemyInFreezeRadius>().enemyInFreezeRadius;   //Only get enemy in player seeing range aka player can see

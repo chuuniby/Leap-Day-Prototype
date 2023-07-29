@@ -5,18 +5,18 @@ using UnityEngine;
 public class GameManagerScript : MonoBehaviour
 {
     public static GameManagerScript instance;
+    public int maxHP;
+    public int currentCoin;
 
     private void Awake()
     {
-        if(instance == null)
-        {
-            instance = this;
-        }
-        else
+        if(instance != null)
         {
             Destroy(gameObject);
+            return;
         }
-        DontDestroyOnLoad(gameObject);
+        instance = this;
+        DontDestroyOnLoad(this);
     }
 
     void Update()

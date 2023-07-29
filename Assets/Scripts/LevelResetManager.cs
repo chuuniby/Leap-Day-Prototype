@@ -31,4 +31,8 @@ public class LevelResetManager : MonoBehaviour
             reset = false;
         }
     }
+    private void FixedUpdate()
+    {
+        player = GameObject.FindGameObjectWithTag("Player");
+    }
 }
