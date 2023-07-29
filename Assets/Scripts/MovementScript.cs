@@ -48,6 +48,8 @@ public class MovementScript : MonoBehaviour
 
     public int jumpCount;
     public int wallJumpCount;
+    public int maxJumpCount;
+    public int maxWallJumpCount;
 
     public TmpCollider tmpCollider;
     private void Start()
@@ -74,8 +76,7 @@ public class MovementScript : MonoBehaviour
 #if UNITY_STANDALONE_WIN
     private void Update()
     {
-        rb2d.velocity = new Vector2(0f,Mathf.Clamp(rb2d.velocity.y, -gravity.y * fallMultiplier, jumpForce));
-        //Debug.Log(rb2d.velocity);
+        rb2d.velocity = new Vector2(0f, Mathf.Clamp(rb2d.velocity.y, -gravity.y * fallMultiplier, jumpForce));
         if (TmpCollider.instance.isCollidedThisFrame)
         {
             rb2d.velocity = Vector2.zero;
@@ -96,7 +97,7 @@ public class MovementScript : MonoBehaviour
             isWallSliding = false;
         }
 
-        if(isGrounded && rb2d.velocity.y == 0)
+        if (isGrounded && rb2d.velocity.y == 0)
         {
             animator.SetBool("OnGround", true);
         }
@@ -110,7 +111,7 @@ public class MovementScript : MonoBehaviour
             animator.SetBool("AnimationWallJumping", false);
         }
 
-            if (touchWall)
+        if (touchWall)
         {
             movementSpeed = -movementSpeed;
             movingRight = !movingRight;
@@ -120,21 +121,20 @@ public class MovementScript : MonoBehaviour
             touchWall = false;
         }
 
-        if (jumpCount == 1)
+        if (jumpCount == maxJumpCount)
         {
             doubleJump = false;
         }
 
         if (isGrounded)
         {
-            jumpCount = 0;
-            //Debug.Log("jumpCount = 0");
             wallJumpCount = 0;
             doubleJump = true;
             TmpCollider.instance.tmpCol.enabled = true;
             StopWallJump();
             animator.SetBool("AnimationJumping", false);
-            animator.SetBool("AnimationWallJumping",false);
+            animator.SetBool("AnimationWallJumping", false);
+            jumpCount = 0;
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -142,8 +142,6 @@ public class MovementScript : MonoBehaviour
             if (isGrounded)
             {
                 jumpCount++;
-                //Debug.Log("JumpCount++");
-                //Debug.Log(jumpCount);
                 animator.SetBool("AnimationJumping", true);
                 rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
             }
@@ -227,7 +225,7 @@ public class MovementScript : MonoBehaviour
             }
         }
 
-        if (isWallJumping && Input.GetKeyDown(KeyCode.Space) && wallJumpCount < 2)
+        if (isWallJumping && Input.GetKeyDown(KeyCode.Space) && wallJumpCount < maxWallJumpCount)
         {
             //animator.SetBool("AnimationJumping", true);
             rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
