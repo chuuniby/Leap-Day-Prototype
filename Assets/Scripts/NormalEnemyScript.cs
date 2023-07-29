@@ -64,6 +64,8 @@ public class NormalEnemyScript : MonoBehaviour
                 rb.velocity = new Vector2(movementSpeed, movementUp);
                 rb.gravityScale = 8f;
                 rb.bodyType = RigidbodyType2D.Dynamic;
+
+                transform.tag = "Enemy";
                 animator.Play("EnemyRunningAnimation");
                 enemyWall.SetActive(false);
                 if (movingSpikeBlock != null)
@@ -139,9 +141,11 @@ public class NormalEnemyScript : MonoBehaviour
             movementSpeed = 0f;
             rb.gravityScale = 0f;
             rb.bodyType = RigidbodyType2D.Kinematic;
+
             animator.Play("EnemyFreezeAnimation");
             enemyWall.SetActive(true);
-            movingSpikeBlock.enabled = false;
+            if(movingSpikeBlock != null)
+                movingSpikeBlock.enabled = false;
             //}
         }
         yield return null;

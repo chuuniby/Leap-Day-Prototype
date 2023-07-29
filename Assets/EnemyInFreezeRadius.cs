@@ -6,11 +6,9 @@ public class EnemyInFreezeRadius : MonoBehaviour
 {
     public List<GameObject> enemyInFreezeRadius;
     public SpriteRenderer freezeRadiusSprite;
-    public CircleCollider2D circleCollider;
     private void Awake()
     {
         freezeRadiusSprite = transform.GetComponent<SpriteRenderer>();
-        circleCollider = transform.GetComponent<CircleCollider2D>();
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -38,13 +36,8 @@ public class EnemyInFreezeRadius : MonoBehaviour
         freezeRadiusSprite.enabled = false;
     }
 
-    public void TurnOnCollider()
+    private void FixedUpdate()
     {
-        circleCollider.enabled = true;
-    }
-
-    public void TurnOffCollider()
-    {
-        circleCollider.enabled = false;
+        transform.position = new Vector2(5f, GameObject.FindGameObjectWithTag("Player").transform.position.y + 5f);
     }
 }
