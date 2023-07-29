@@ -22,7 +22,6 @@ public class PlayerScript : MonoBehaviour
     {
         if (hp <= 0)
         {
-            hp = 0;
             LevelResetManager.instance.reset = true;
         }
         if (hp > hpMax)
@@ -69,12 +68,11 @@ public class PlayerScript : MonoBehaviour
                 if (movementScript.rb2d.velocity.y >= 0)
                 {
                     hp -= 1;
-                    transform.position = LevelResetManager.instance.respawnPoint;
+                    //transform.position = LevelResetManager.instance.respawnPoint;
                 }
                 else
                 {
-                    collision.transform.GetComponent<NormalEnemyScript>().died = true;
-
+                    collision.transform.GetComponent<NormalEnemyScript>().died = true;      //why the fuck would you control the enemy from player script
                 }
 
             }

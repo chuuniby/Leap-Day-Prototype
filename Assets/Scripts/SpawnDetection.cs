@@ -19,7 +19,6 @@ public class SpawnDetection : MonoBehaviour
                 BossScript.instance.spawnPoints.Add(transform.GetChild(0).gameObject);
                 //play some animation to let player know where the enemy going to spawn
 
-                Debug.Log("shoot");
                 BossScript.instance.StartCoroutine("SpawnEnemy");
             }
         }

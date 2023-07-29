@@ -28,10 +28,12 @@ public class NormalEnemyScript : MonoBehaviour
     public ParticleSystem boltParticleSystem;
     public ParticleSystem smokeParticleSystem;
 
-    public int hp;
     public int dir;
 
     public GameObject enemyWall;
+    public float enemyFreezingTime = 5f;
+    public float enemyFreezeTimer;
+    public bool startTimer = false;
 
 
     private void Awake()
@@ -41,7 +43,7 @@ public class NormalEnemyScript : MonoBehaviour
     }
     void Update()
     {
-        StartCoroutine(Freeze());
+        //StartCoroutine(Freeze());
 
         rb.velocity = new Vector2(movementSpeed, movementUp);
         isNotAtCliff = Physics2D.OverlapBox(cliffCheck.position, new Vector2(2f, 2f), 0f, groundLayer);
@@ -55,7 +57,6 @@ public class NormalEnemyScript : MonoBehaviour
             rb.gravityScale = 0;
             animator.enabled = false;
             StartCoroutine(PlayParticleSystem());
-            died = false;
         }
 
         if (!isNotAtCliff && isGrounded)
@@ -81,11 +82,12 @@ public class NormalEnemyScript : MonoBehaviour
 
     IEnumerator PlayParticleSystem()
     {
+        died = false;
         explosionParticleSystem.Play();
         nutParticleSystem.Play();
         boltParticleSystem.Play();
         smokeParticleSystem.Play();
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
         Destroy(gameObject);
     }
 
@@ -93,28 +95,40 @@ public class NormalEnemyScript : MonoBehaviour
     {
         //if (rb.bodyType == RigidbodyType2D.Dynamic)  //normal movement
         //{
-        if (!freeze)
-        {
-            movementSpeed = normalMovementSpeed * dir;
-            rb.velocity = new Vector2(movementSpeed, movementUp);
-            rb.gravityScale = 8f;
-            rb.bodyType = RigidbodyType2D.Dynamic;
-            animator.Play("EnemyRunningAnimation");
-            enemyWall.SetActive(false);
-        }
+            if (!freeze)
+            {
+                movementSpeed = normalMovementSpeed * dir;
+                rb.velocity = new Vector2(movementSpeed, movementUp);
+                rb.gravityScale = 8f;
+                rb.bodyType = RigidbodyType2D.Dynamic;
+                animator.Play("EnemyRunningAnimation");
+                enemyWall.SetActive(false);
+            }
 
-        //if (rb.bodyType == RigidbodyType2D.Static)     //freezing chip
-        //{
-        if (freeze)
-        {
-            
+            //if (rb.bodyType == RigidbodyType2D.Static)     //freezing chip
+            //{
+            if (freeze)
+            {
+            startTimer = true;
             movementSpeed = 0f;
-            rb.gravityScale = 0f;
-            rb.bodyType = RigidbodyType2D.Kinematic;
-            animator.Play("EnemyFreezeAnimation");
-            enemyWall.SetActive(true);
+                rb.gravityScale = 0f;
+                rb.bodyType = RigidbodyType2D.Kinematic;
+                animator.Play("EnemyFreezeAnimation");
+                enemyWall.SetActive(true);
+            if (startTimer)
+            {
+                enemyFreezeTimer -= Time.deltaTime;
+                if (enemyFreezeTimer < 0)
+                {
+                    //minEnemy.transform.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;    //unfreeze enemy
+                    enemyFreezeTimer = enemyFreezingTime;
+                    freeze = false;
+                    startTimer = false;
+                }
+            }
             //}
         }
-        yield return null;
+            yield return null;
+        
     }
 }

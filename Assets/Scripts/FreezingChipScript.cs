@@ -11,31 +11,18 @@ public class FreezingChipScript : MonoBehaviour
     public List<GameObject> enemies;
     //public GameObject minMovingBlock;
 
-    public float enemyFreezingTime = 5f;
-    public float enemyFreezeTimer;
-    public bool startTimer = false;
+
     public GameObject freezeCheck;
 
     private void Start()
     {
         minDistance = Mathf.Infinity;
         minEnemy = null;
-        enemyFreezeTimer = enemyFreezingTime;
     }
 
     public void Update()
     {
-        if(startTimer)
-        {
-            enemyFreezeTimer -= Time.deltaTime;
-            if(enemyFreezeTimer < 0)
-            {
-                //minEnemy.transform.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;    //unfreeze enemy
-                minEnemy.GetComponent<NormalEnemyScript>().freeze = false;
-                enemyFreezeTimer = enemyFreezingTime;
-                startTimer = false;
-            }
-        }
+    
 
     }
 
@@ -67,7 +54,7 @@ public class FreezingChipScript : MonoBehaviour
         {
             enemy.transform.tag = "Platform";
             enemy.GetComponent<NormalEnemyScript>().freeze = true;
+            enemy.GetComponent<NormalEnemyScript>().StartCoroutine("Freeze");
         }
-        startTimer = true;
     }
 }
