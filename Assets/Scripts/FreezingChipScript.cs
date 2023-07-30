@@ -46,9 +46,15 @@ public class FreezingChipScript : MonoBehaviour
 
         foreach(GameObject enemy in enemies)
         {
-            enemy.transform.tag = "Platform";
-            enemy.GetComponent<NormalEnemyScript>().freeze = true;
-            enemy.GetComponent<NormalEnemyScript>().StartCoroutine("Freeze");
+            if (enemy != null)
+            {
+                enemy.transform.tag = "Platform";
+                enemy.GetComponent<NormalEnemyScript>().freeze = true;
+                enemy.GetComponent<NormalEnemyScript>().StartCoroutine("Freeze");
+
+            }
+            else
+                return;
         }
     }
 }

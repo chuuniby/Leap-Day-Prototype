@@ -34,6 +34,9 @@ public class NormalEnemyScript : MonoBehaviour
     public float enemyFreezingTime = 5f;
     public float enemyFreezeTimer;
     public bool startTimer = false;
+    public float duration = 1.2f;
+    public float magnitude;
+    public AnimationCurve curve;
 
     public MovingSpikeBlock movingSpikeBlock;
 
@@ -54,6 +57,21 @@ public class NormalEnemyScript : MonoBehaviour
         if (startTimer)
         {
             enemyFreezeTimer -= Time.deltaTime;
+            //if(enemyFreezeTimer < 1)
+            //{
+            //    Vector3 startPos = transform.position;
+            //    float elapsedTime = 0f;
+
+            //    while (elapsedTime < duration)
+            //    {
+            //        elapsedTime += Time.deltaTime;
+            //        magnitude = curve.Evaluate(elapsedTime / duration);
+            //        transform.position = startPos + Random.insideUnitSphere * magnitude;
+            //        return;
+            //    }
+
+            //    transform.position = startPos;
+            //}
             if (enemyFreezeTimer < 0)
             {
                 //minEnemy.transform.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;    //unfreeze enemy
