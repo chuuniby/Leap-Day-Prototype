@@ -23,6 +23,7 @@ public class LevelResetManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        player = GameObject.FindGameObjectWithTag("Player");
         if (reset) //player hp = 0 => reset
         {
             currentScene = SceneManager.GetActiveScene().name;
@@ -30,9 +31,5 @@ public class LevelResetManager : MonoBehaviour
             PlayerScript.playerScriptStatic.hp = PlayerScript.playerScriptStatic.hpMax;
             reset = false;
         }
-    }
-    private void FixedUpdate()
-    {
-        player = GameObject.FindGameObjectWithTag("Player");
     }
 }

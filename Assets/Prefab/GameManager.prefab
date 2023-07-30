@@ -76,7 +76,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3188fb3c2bc68304faabd5d699e82969, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 1
+  maxHP: 3
   currentCoin: 0
 --- !u!114 &1765466628
 MonoBehaviour:

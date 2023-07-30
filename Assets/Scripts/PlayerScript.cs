@@ -25,7 +25,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (hp <= 0)
         {
-            LevelResetManager.instance.reset = true;
+            StartCoroutine(Died());
         }
         if (hp > hpMax)
         {
@@ -85,5 +85,13 @@ public class PlayerScript : MonoBehaviour
                 }
             }
         }
+    }
+
+    IEnumerator Died()
+    {
+        Time.timeScale = 0.1f;
+        yield return new WaitForSecondsRealtime(2f);
+        LevelResetManager.instance.reset = true;
+        Time.timeScale = 1f;
     }
 }

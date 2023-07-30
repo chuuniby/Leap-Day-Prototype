@@ -51,7 +51,8 @@ public class MovementScript : MonoBehaviour
     public int maxJumpCount;
     public int maxWallJumpCount;
 
-    public TmpCollider tmpCollider;
+    public ParticleSystem wallSlideDust;
+    public ParticleSystem JumpDust;
     private void Start()
     {
         defaultMovementSpeed = movementSpeed;
@@ -144,6 +145,7 @@ public class MovementScript : MonoBehaviour
                 jumpCount++;
                 animator.SetBool("AnimationJumping", true);
                 rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
+                JumpDust.Play();
             }
             else
             {
@@ -152,6 +154,7 @@ public class MovementScript : MonoBehaviour
                     //animator.SetBool("AnimationJumping", true);
                     rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
                     jumpCount++;
+                    JumpDust.Play();
                 }
             }
         }
@@ -201,12 +204,14 @@ public class MovementScript : MonoBehaviour
             wallJumpCount = 0;
             jumpCount = 0;
             doubleJump = false;
+            wallSlideDust.Play();
             CancelInvoke(nameof(StopWallJump));
         }
         else
         {
             animator.SetBool("AnimationWallSliding", false);
             wallJumpingCounter -= Time.deltaTime;
+            wallSlideDust.Stop();
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && wallJumpingCounter > 0f)
@@ -223,6 +228,7 @@ public class MovementScript : MonoBehaviour
                 localscale.x *= -1f;
                 transform.localScale = localscale;
             }
+            JumpDust.Play();
         }
 
         if (isWallJumping && Input.GetKeyDown(KeyCode.Space) && wallJumpCount < maxWallJumpCount)
@@ -231,6 +237,7 @@ public class MovementScript : MonoBehaviour
             rb2d.velocity = new Vector2(rb2d.velocity.x, 0f);
             rb2d.velocity = new Vector2(wallJumpingDir * wallJumpingPower.x, wallJumpingPower.y);
             wallJumpCount++;
+            JumpDust.Play();
         }
     }
 
