@@ -9,4 +9,11 @@ public class MainMenuManagerScript : MonoBehaviour
     {
         SceneManager.LoadScene("Docks");
     }
+    void FixedUpdate()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+    }
 }

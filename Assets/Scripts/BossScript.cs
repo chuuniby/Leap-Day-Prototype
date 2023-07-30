@@ -82,7 +82,12 @@ public class BossScript : MonoBehaviour
 
                 //if (finishPhase) currentPhase = BossPhase.Phase2;
 
-                if (_prefabEnemy == null && checkPhase1 == true)
+                if(_prefabEnemy == null)
+                {
+                    spawnDetectionScriptOn = true;
+                }
+
+                if (_prefabEnemy == null && checkPhase1 == true)        //go to phase 2
                 {
                     finishPhase = true;
                 }
@@ -211,14 +216,14 @@ public class BossScript : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator StartAttack()
+    IEnumerator StartAttack()       //Intro
     {
         animator.SetTrigger("Idle");
         firstTimeFight = true;
         //play intro like put name tag there with cool image or smth
         yield return new WaitForSeconds(2f);
         startAttack = true;
-        if (startAttack)
+        if (startAttack)    //Start phase 1
         {
             spawnDetectionScriptOn = true;
             currentPhase = BossPhase.Phase1;
@@ -232,10 +237,15 @@ public class BossScript : MonoBehaviour
         {
             _prefabEnemy = Instantiate(normalEnemy, spawnPoint.transform.position, Quaternion.identity); //spawn enemy on player previous pos
         }
-        checkPhase1 = true;
+        checkPhase1 = true;     //win condition
     }
     IEnumerator WaitxSeconds(float x)
     {
         yield return new WaitForSeconds(x);
     }
+
+    //private void OnParticleTrigger()
+    //{
+    //    int numEnter = ps.GetTriggerParticles(ParticleSystemTriggerEventType.Enter, enter);
+    //}
 }

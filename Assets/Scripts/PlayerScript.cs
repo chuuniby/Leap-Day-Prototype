@@ -25,6 +25,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (hp <= 0)
         {
+            hp = 0;
             StartCoroutine(Died());
         }
         if (hp > hpMax)

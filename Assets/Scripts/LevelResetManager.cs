@@ -30,6 +30,7 @@ public class LevelResetManager : MonoBehaviour
             SceneManager.LoadScene(currentScene);
             PlayerScript.playerScriptStatic.hp = PlayerScript.playerScriptStatic.hpMax;
             reset = false;
+            Time.timeScale = 1f;
         }
     }
 }

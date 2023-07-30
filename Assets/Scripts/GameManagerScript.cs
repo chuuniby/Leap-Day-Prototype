@@ -19,7 +19,7 @@ public class GameManagerScript : MonoBehaviour
         DontDestroyOnLoad(this);
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
