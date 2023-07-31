@@ -8,12 +8,8 @@ public class SpawnDetection : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //BossScript.instance.spawnPoints.Clear(); //Clear
-        if (BossScript.instance.spawnDetectionScriptOn == true)         //activate check player location condition and spawn enemy afterwards
+        if (BossScript.instance.spawnDetectionScriptOn == true && BossScript.instance.enemyCount < 2)         //activate check player location condition and spawn enemy afterwards
         {
-            foreach(BoxCollider2D col in BossScript.instance.leftMidRight)
-            {
-                col.enabled = true;
-            }
             if (collision.CompareTag("Player"))
             {
                 foreach (BoxCollider2D col in BossScript.instance.leftMidRight)

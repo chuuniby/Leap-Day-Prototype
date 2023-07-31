@@ -13,7 +13,13 @@ public class LevelResetManager : MonoBehaviour
     public string currentScene;
     private void Awake()
     {
+        if (instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
         instance = this;
+        DontDestroyOnLoad(this);
     }
     void Start()
     {

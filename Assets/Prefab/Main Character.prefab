@@ -422,7 +422,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.1
+      scalar: 0.05
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -475,7 +475,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 15
+      scalar: 20
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -10175,6 +10175,14 @@ MonoBehaviour:
   maxWallJumpCount: 2
   wallSlideDust: {fileID: 5194481491760296623}
   JumpDust: {fileID: 5194481492460050829}
+  timeTouchEnded: 0
+  displayTime: 0.5
+  touchStartPosition: {x: 0, y: 0}
+  touchEndPosition: {x: 0, y: 0}
+  direction: 
+  x: 0
+  y: 0
+  text: {fileID: 0}
 --- !u!114 &7600245104401257351
 MonoBehaviour:
   m_ObjectHideFlags: 0

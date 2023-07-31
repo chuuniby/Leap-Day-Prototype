@@ -18,6 +18,7 @@ public class NormalEnemyScript : MonoBehaviour
     public bool nearWall;
     public bool died;
     public bool freeze;
+    public bool enemyBoss;
     public LayerMask wallLayer;
     public Transform cliffCheck;
     public LayerMask groundLayer;
@@ -34,9 +35,9 @@ public class NormalEnemyScript : MonoBehaviour
     public float enemyFreezingTime = 5f;
     public float enemyFreezeTimer;
     public bool startTimer = false;
-    public float duration = 1.2f;
-    public float magnitude;
-    public AnimationCurve curve;
+    //public float duration = 1.2f;
+    //public float magnitude;
+    //public AnimationCurve curve;
 
     public MovingSpikeBlock movingSpikeBlock;
 
@@ -46,7 +47,7 @@ public class NormalEnemyScript : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         dir = 1;
         movingSpikeBlock = transform.GetComponent<MovingSpikeBlock>();
-        if(movingSpikeBlock == null)
+        if (movingSpikeBlock == null)
         {
             return;
         }
@@ -101,6 +102,16 @@ public class NormalEnemyScript : MonoBehaviour
             movementSpeed = 0;
             rb.gravityScale = 0;
             animator.enabled = false;
+            if (enemyBoss)
+            {
+                BossScript.instance.enemyCount++;
+                BossScript.instance.spawnPoints.Clear();
+                BossScript.instance.spawnDetectionScriptOn = true;
+                foreach (BoxCollider2D col in BossScript.instance.leftMidRight)
+                {
+                    col.enabled = true;
+                }
+            }
             StartCoroutine(PlayParticleSystem());
         }
 
@@ -133,7 +144,7 @@ public class NormalEnemyScript : MonoBehaviour
         nutParticleSystem.Play();
         boltParticleSystem.Play();
         smokeParticleSystem.Play();
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         Destroy(gameObject);
     }
 
@@ -162,7 +173,7 @@ public class NormalEnemyScript : MonoBehaviour
 
             animator.Play("EnemyFreezeAnimation");
             enemyWall.SetActive(true);
-            if(movingSpikeBlock != null)
+            if (movingSpikeBlock != null)
                 movingSpikeBlock.enabled = false;
             //}
         }

@@ -1,9 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 public class BossScript : MonoBehaviour
 {
@@ -12,33 +10,40 @@ public class BossScript : MonoBehaviour
 
     public Animator animator;
 
+    public GameObject player;
     public GameObject spikeGroup;
     public GameObject[] spikes;
     public GameObject warningSign;
     public GameObject[] lasers;
     public GameObject normalEnemy;
     public GameObject _prefabEnemy;
+    public int enemyCount;
 
     public BoxCollider2D[] leftMidRight;
     public List<GameObject> spawnPoints;
 
     public float timer;
     public float waitingTimeForWarningSign;
+    public Vector2 curPos;
+
 
     public int phase2Count = 3;
 
     public Color tmpColor;
     public Color tmpWarningColor;
 
+    public bool BossDescend;
     public bool startAttack;
     public bool startPattern;
     public bool dead = false;
     public bool firstTimeFight = true;
     public bool finishPhase;
     public bool checkPhase1;
+    public bool enemyIsDeadAndSpawnNewOne;
     public bool spawnDetectionScriptOn;
     public bool laserDoDamage;
     public ParticleSystem.MainModule mainModule;
+    public float timerBoss;
     public enum BossPhase
     {
         Null,
@@ -57,7 +62,7 @@ public class BossScript : MonoBehaviour
     void Start()
     {
         currentPhase = BossPhase.Null;
-        tmpColor = new Color(255f,0f,0f,0f);
+        tmpColor = new Color(255f, 0f, 0f, 0f);
     }
 
     void Update()
@@ -74,20 +79,32 @@ public class BossScript : MonoBehaviour
 
                 //Debug.Log("Hit update");
 
-                //StartCoroutine(nameof(WherePlayer)); //Check player pos
-                //    spawnPoints.Clear(); //Clear
-                //    StartCoroutine(WaitxSeconds(2f)); //Give player x amount of time to kill enemy before spawning 
-                //                                        //Maybe Im supposed to summon the boss down so that the player can fight?
+                    //StartCoroutine(nameof(WherePlayer)); //Check player pos
+                    //    spawnPoints.Clear(); //Clear
+                    //    StartCoroutine(WaitxSeconds(2f)); //Give player x amount of time to kill enemy before spawning 
+                    //                                        //Maybe Im supposed to summon the boss down so that the player can fight?
 
 
-                //if (finishPhase) currentPhase = BossPhase.Phase2;
+                    //if (finishPhase) currentPhase = BossPhase.Phase2;
 
-                if(_prefabEnemy == null)
+                    //if (_prefabEnemy == null)           //this always true so player go phase 2 lol
+                    //{
+                    //    spawnDetectionScriptOn = true;
+                    //}
+
+                if(firstTimeFight == true)
                 {
-                    spawnDetectionScriptOn = true;
+                    StartCoroutine(BossTease());
                 }
 
-                if (_prefabEnemy == null && checkPhase1 == true)        //go to phase 2
+                if (enemyCount >= 2)
+                {
+                    //animator.SetBool("BossDescend", true);
+                    //if boss get hit
+                    checkPhase1 = true;     //win condition
+                }
+
+                if (checkPhase1 == true)        //go to phase 2
                 {
                     finishPhase = true;
                 }
@@ -105,25 +122,31 @@ public class BossScript : MonoBehaviour
                     StartCoroutine(SpikeFade());
                     startPattern = false;
                 }
-                if(phase2Count == 0)
+                if (phase2Count == 0)
                 {
                     finishPhase = true;
                 }
-                if (finishPhase) currentPhase = BossPhase.Phase3;
+                //if (finishPhase) currentPhase = BossPhase.Phase3;     //Phase 3 no longer use
+                if (finishPhase) currentPhase = BossPhase.Dead;
                 break;
 
             case BossPhase.Phase3:
+                //warningSign.SetActive(false);
+                //spikeGroup.SetActive(false);
+                //finishPhase = false;
+                //StartCoroutine(LaserAppear());
+                                                                        //phase 3 no longer use
+                //if (finishPhase) currentPhase = BossPhase.Dead;
+                //break;
+                break;
+            case BossPhase.Dead:
                 warningSign.SetActive(false);
                 spikeGroup.SetActive(false);
                 finishPhase = false;
-                StartCoroutine(LaserAppear());
-
-                if (finishPhase) currentPhase = BossPhase.Dead;
-                break;
-            case BossPhase.Dead:
-                dead = true;
+                dead = true;                //boss is dead what now lol
                 transform.GetComponent<SpriteRenderer>().enabled = false;
                 //Play dead animation
+                //Go to next scene I guess
                 break;
         }
     }
@@ -141,7 +164,7 @@ public class BossScript : MonoBehaviour
             }
             StartCoroutine(Warning());
             yield return new WaitForSeconds(3f);
-            StartCoroutine (SpikeAppear());
+            StartCoroutine(SpikeAppear());
         }
     }
 
@@ -158,7 +181,7 @@ public class BossScript : MonoBehaviour
             }
             phase2Count--;
             yield return new WaitForSeconds(3f);
-            StartCoroutine (SpikeFade());
+            StartCoroutine(SpikeFade());
         }
 
     }
@@ -178,7 +201,7 @@ public class BossScript : MonoBehaviour
     }
     IEnumerator LaserConverge()
     {
-        foreach(GameObject laser in lasers)
+        foreach (GameObject laser in lasers)
         {
             if (laser.activeInHierarchy)
             {
@@ -219,10 +242,18 @@ public class BossScript : MonoBehaviour
     IEnumerator StartAttack()       //Intro
     {
         animator.SetTrigger("Idle");
-        firstTimeFight = true;
+        curPos = transform.position;
         //play intro like put name tag there with cool image or smth
+        if (firstTimeFight != true)
+        {
+            startAttack = true;
+        }
+        else
+        {
+            currentPhase = BossPhase.Phase1;
+            yield break;
+        }
         yield return new WaitForSeconds(2f);
-        startAttack = true;
         if (startAttack)    //Start phase 1
         {
             spawnDetectionScriptOn = true;
@@ -233,19 +264,47 @@ public class BossScript : MonoBehaviour
     public IEnumerator SpawnEnemy()
     {
         yield return new WaitForSeconds(1f);
+        StartCoroutine(SpawnEnemyAnimation());
+        yield return new WaitForSeconds(1f);
+        StartCoroutine(OffSpawnEnemyAnimation());
         foreach (GameObject spawnPoint in spawnPoints)
         {
             _prefabEnemy = Instantiate(normalEnemy, spawnPoint.transform.position, Quaternion.identity); //spawn enemy on player previous pos
+            _prefabEnemy.GetComponent<NormalEnemyScript>().enemyBoss = true;
         }
-        checkPhase1 = true;     //win condition
     }
+
+    public IEnumerator SpawnEnemyAnimation()
+    {
+        foreach (GameObject spawnPoint in spawnPoints)
+            spawnPoint.GetComponent<SpriteRenderer>().enabled = true;       //Get Portal Effect or Something
+        yield return null;
+    }
+
+    IEnumerator OffSpawnEnemyAnimation()
+    {
+        foreach (GameObject spawnPoint in spawnPoints)
+            spawnPoint.GetComponent<SpriteRenderer>().enabled = false;        //Get Portal Effect or Something
+        yield return null;
+    }
+
     IEnumerator WaitxSeconds(float x)
     {
         yield return new WaitForSeconds(x);
     }
 
-    //private void OnParticleTrigger()
-    //{
-    //    int numEnter = ps.GetTriggerParticles(ParticleSystemTriggerEventType.Enter, enter);
-    //}
+    IEnumerator BossTease()
+    {
+        animator.enabled = false;
+        //Start Taunting like come and get me or something
+        if (Vector2.Distance(transform.position, player.transform.position) < 7f)
+            transform.position = Vector2.Lerp(transform.position,new Vector3(transform.position.x, transform.position.y + 7f),Time.deltaTime);
+        else
+            transform.position = Vector2.Lerp(transform.position,curPos,Time.deltaTime);
+
+        timerBoss -= Time.deltaTime;
+        if (timerBoss < 0)
+        LevelSequencer.instance.unlockDockLevel2 = true;
+            yield return null;
+    }
 }

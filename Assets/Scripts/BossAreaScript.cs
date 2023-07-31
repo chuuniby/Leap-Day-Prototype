@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BossAreaScript : MonoBehaviour
 {
@@ -11,6 +12,14 @@ public class BossAreaScript : MonoBehaviour
     {
         if (collision.transform.CompareTag("Player"))
         {
+            if(SceneManager.GetActiveScene().name == "Terrace House 2")
+            {
+                BossScript.instance.firstTimeFight = false;
+            }
+            else
+            {
+                BossScript.instance.firstTimeFight= true;
+            }
             timer -= Time.deltaTime;
             if (timer < 0)
             {

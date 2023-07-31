@@ -8,25 +8,45 @@ public class LevelSequencer : MonoBehaviour
     public static LevelSequencer instance;
     public bool unlockDockLevel;
     public bool unlockTerraceHouseLevel;
+    public bool unlockTerraceHouseLevel2;
     public bool unlockDockLevel2;
-    void Awake()
+    private void Awake()
     {
+        if (instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
         instance = this;
+        DontDestroyOnLoad(this);
     }
 
-    public void ChangeLevel()
+    private void FixedUpdate()
     {
-        if(unlockDockLevel)
-        {
-            SceneManager.LoadScene("Docks");
-        }
-        if(unlockTerraceHouseLevel)
-        {
-            SceneManager.LoadScene("Terrace House");
-        }
-        if(unlockDockLevel2)
+        if (unlockDockLevel2)
         {
             SceneManager.LoadScene("Docks 2");
+            unlockDockLevel2 = false;
         }
     }
+
+    //public void ChangeLevel()
+    //{
+    //        SceneManager.LoadScene("Docks");
+    //    }
+    //    if(unlockTerraceHouseLevel2)
+    //    {
+    //        SceneManager.LoadScene("Terrace House 2");      //This is the wrong sequence it should go to Terrace House then Dock 2 then Terrace House 2
+    //    }
+    //    if(unlockDockLevel2)
+    //    {
+    //        SceneManager.LoadScene("Docks 2");
+    //    }
+    //    if (unlockTerraceHouseLevel)
+    //    {
+    //        
+    //    if(unlockDockLevel)
+    //    {SceneManager.LoadScene("Terrace House");
+    //    }
+    //}
 }

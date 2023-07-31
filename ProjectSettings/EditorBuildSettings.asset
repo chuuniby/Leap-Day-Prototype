@@ -16,8 +16,11 @@ EditorBuildSettings:
     guid: 81bdf929d2c02ca44a6cd7db7f1b041c
   - enabled: 1
     path: Assets/Scenes/Terrace House.unity
-    guid: 8af88cd50fc301247beb45c597e7476c
+    guid: 53f963304cb41ec4d838fe8c8b234fec
   - enabled: 1
     path: Assets/Scenes/Docks 2.unity
     guid: eaee7aa791b305b40b60ca12d26eb516
+  - enabled: 1
+    path: Assets/Scenes/Terrace House 2.unity
+    guid: 8af88cd50fc301247beb45c597e7476c
   m_configObjects: {}

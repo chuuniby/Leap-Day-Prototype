@@ -74,14 +74,16 @@ public class PlayerScript : MonoBehaviour
             {
                 if(hp > 0)
                 {
-                    if (movementScript.rb2d.velocity.y >= 0)
+                    if (movementScript.rb2d.velocity.y < 0)
                     {
-                        hp -= 1;
-                        transform.position = LevelResetManager.instance.respawnPoint;
+                        Debug.Log(movementScript.rb2d.velocity.y);
+                        collision.transform.GetComponent<NormalEnemyScript>().died = true;      //why the fuck would you control the enemy from player script
                     }
                     else
                     {
-                        collision.transform.GetComponent<NormalEnemyScript>().died = true;      //why the fuck would you control the enemy from player script
+                        hp -= 1;
+                        Debug.Log(movementScript.rb2d.velocity.y);
+                        //transform.position = LevelResetManager.instance.respawnPoint;
                     }
                 }
             }
