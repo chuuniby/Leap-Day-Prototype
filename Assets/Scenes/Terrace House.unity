@@ -4135,30 +4135,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1464685269349724629, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_fontSize
-      value: 72
-      objectReference: {fileID: 0}
-    - target: {fileID: 1464685269349724629, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_enableAutoSizing
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1464685269349724634, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 320
-      objectReference: {fileID: 0}
-    - target: {fileID: 1464685269349724634, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 110
-      objectReference: {fileID: 0}
-    - target: {fileID: 1464685269349724634, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 500
-      objectReference: {fileID: 0}
-    - target: {fileID: 1464685269349724634, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -100
-      objectReference: {fileID: 0}
     - target: {fileID: 1464685269491833233, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -4171,10 +4147,6 @@ PrefabInstance:
       propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 7600245104773747895}
-    - target: {fileID: 1464685269491833242, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1464685270239701266, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -4187,50 +4159,10 @@ PrefabInstance:
       propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 241}
-    - target: {fileID: 1464685270239701271, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1464685271174104540, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 320
-      objectReference: {fileID: 0}
-    - target: {fileID: 1464685271174104540, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 110
-      objectReference: {fileID: 0}
-    - target: {fileID: 1464685271174104540, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -500
-      objectReference: {fileID: 0}
-    - target: {fileID: 1464685271174104540, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -100
-      objectReference: {fileID: 0}
-    - target: {fileID: 1464685271174104543, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_fontSize
-      value: 72
-      objectReference: {fileID: 0}
-    - target: {fileID: 1464685271174104543, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_enableAutoSizing
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1464685271368161636, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
-    - target: {fileID: 1464685271368161637, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_UiScaleMode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1464685271368161637, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_ReferenceResolution.x
-      value: 1920
-      objectReference: {fileID: 0}
-    - target: {fileID: 1464685271368161637, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
-      propertyPath: m_ReferenceResolution.y
-      value: 1080
-      objectReference: {fileID: 0}
     - target: {fileID: 1464685271368161639, guid: 90bcff7fd3b78164ea40e3bcb779736d, type: 3}
       propertyPath: m_Pivot.x
       value: 0

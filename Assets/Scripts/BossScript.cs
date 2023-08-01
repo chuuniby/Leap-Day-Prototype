@@ -14,6 +14,7 @@ public class BossScript : MonoBehaviour
     public GameObject spikeGroup;
     public GameObject[] spikes;
     public GameObject warningSign;
+    public GameObject Sign;
     public GameObject[] lasers;
     public GameObject normalEnemy;
     public GameObject _prefabEnemy;
@@ -44,13 +45,17 @@ public class BossScript : MonoBehaviour
     public bool laserDoDamage;
     public ParticleSystem.MainModule mainModule;
     public float timerBoss;
+    public float alpha;
+    public bool startFade;
+    public Color startColor;
+    public Color endColor;
     public enum BossPhase
     {
         Null,
         Intro,
         Phase1,
         Phase2,
-        Phase3,
+        //Phase3,
         Dead
     };
     private void Awake()
@@ -67,6 +72,7 @@ public class BossScript : MonoBehaviour
 
     void Update()
     {
+
         switch (currentPhase)
         {
             case BossPhase.Intro:
@@ -79,20 +85,20 @@ public class BossScript : MonoBehaviour
 
                 //Debug.Log("Hit update");
 
-                    //StartCoroutine(nameof(WherePlayer)); //Check player pos
-                    //    spawnPoints.Clear(); //Clear
-                    //    StartCoroutine(WaitxSeconds(2f)); //Give player x amount of time to kill enemy before spawning 
-                    //                                        //Maybe Im supposed to summon the boss down so that the player can fight?
+                //StartCoroutine(nameof(WherePlayer)); //Check player pos
+                //    spawnPoints.Clear(); //Clear
+                //    StartCoroutine(WaitxSeconds(2f)); //Give player x amount of time to kill enemy before spawning 
+                //                                        //Maybe Im supposed to summon the boss down so that the player can fight?
 
 
-                    //if (finishPhase) currentPhase = BossPhase.Phase2;
+                //if (finishPhase) currentPhase = BossPhase.Phase2;
 
-                    //if (_prefabEnemy == null)           //this always true so player go phase 2 lol
-                    //{
-                    //    spawnDetectionScriptOn = true;
-                    //}
+                //if (_prefabEnemy == null)           //this always true so player go phase 2 lol
+                //{
+                //    spawnDetectionScriptOn = true;
+                //}
 
-                if(firstTimeFight == true)
+                if (firstTimeFight == true)
                 {
                     StartCoroutine(BossTease());
                 }
@@ -120,7 +126,6 @@ public class BossScript : MonoBehaviour
                 if (startPattern)
                 {
                     StartCoroutine(SpikeFade());
-                    startPattern = false;
                 }
                 if (phase2Count == 0)
                 {
@@ -130,15 +135,15 @@ public class BossScript : MonoBehaviour
                 if (finishPhase) currentPhase = BossPhase.Dead;
                 break;
 
-            case BossPhase.Phase3:
-                //warningSign.SetActive(false);
-                //spikeGroup.SetActive(false);
-                //finishPhase = false;
-                //StartCoroutine(LaserAppear());
-                                                                        //phase 3 no longer use
-                //if (finishPhase) currentPhase = BossPhase.Dead;
-                //break;
-                break;
+            //case BossPhase.Phase3:
+            //    //warningSign.SetActive(false);
+            //    //spikeGroup.SetActive(false);
+            //    //finishPhase = false;
+            //    //StartCoroutine(LaserAppear());
+            //                                                            //phase 3 no longer use
+            //    //if (finishPhase) currentPhase = BossPhase.Dead;
+            //    //break;
+            //    break;
             case BossPhase.Dead:
                 warningSign.SetActive(false);
                 spikeGroup.SetActive(false);
@@ -153,11 +158,12 @@ public class BossScript : MonoBehaviour
 
     IEnumerator SpikeFade() //Stop Attack Phase 2
     {
+        startFade = true;
+        StartCoroutine(FadeImage());
         if (spikeGroup.activeInHierarchy)
         {
             foreach (GameObject spike in spikes)
             {
-                warningSign.GetComponent<SpriteRenderer>().color = new Color(255f, 235f, 0f, 255f);
                 tmpColor.a = 0.3f;
                 spike.GetComponent<SpriteRenderer>().color = tmpColor;
                 spike.GetComponent<PolygonCollider2D>().enabled = false;
@@ -188,8 +194,9 @@ public class BossScript : MonoBehaviour
 
     IEnumerator Warning() //Warning Phase 2
     {
-        yield return new WaitForSeconds(waitingTimeForWarningSign);
+        yield return new WaitForSeconds(waitingTimeForWarningSign);                             //time wait = time wait in spike Appear - waitingTimeForWarningSign
         warningSign.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f, 255f);
+        startPattern = false;
     }
 
     IEnumerator LaserAppear() //Start Attack Phase 3
@@ -298,13 +305,43 @@ public class BossScript : MonoBehaviour
         animator.enabled = false;
         //Start Taunting like come and get me or something
         if (Vector2.Distance(transform.position, player.transform.position) < 7f)
-            transform.position = Vector2.Lerp(transform.position,new Vector3(transform.position.x, transform.position.y + 7f),Time.deltaTime);
+            transform.position = Vector2.Lerp(transform.position, new Vector3(transform.position.x, transform.position.y + 7f), Time.deltaTime);
         else
-            transform.position = Vector2.Lerp(transform.position,curPos,Time.deltaTime);
+            transform.position = Vector2.Lerp(transform.position, curPos, Time.deltaTime);
 
         timerBoss -= Time.deltaTime;
         if (timerBoss < 0)
-        LevelSequencer.instance.unlockDockLevel2 = true;
-            yield return null;
+            LevelSequencer.instance.unlockDockLevel2 = true;
+        yield return null;
     }
+
+    IEnumerator FadeImage()
+    {
+        // fade from opaque to transparent
+        if (startFade)
+        {
+            // loop over 1 second backwards
+            for (float i = 1; i >= 0; i -= Time.deltaTime)
+            {
+                // set color with i as alpha
+                Sign.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, i);
+                yield return null;
+            }
+            startFade = false;
+        }
+        // fade from transparent to opaque
+        if(!startFade)
+        {
+            // loop over 1 second
+            for (float i = 0; i <= 1; i += Time.deltaTime)
+            {
+                // set color with i as alpha
+                Sign.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, i);
+                yield return null;
+            }
+            startFade = true;
+        }
+    }
+
+
 }
