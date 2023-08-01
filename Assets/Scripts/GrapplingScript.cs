@@ -34,6 +34,8 @@ public class GrapplingScript : MonoBehaviour
     public float coolDownGrappling = .5f;
     public float timerGrappling;
     public bool startCooldown;
+    public GameObject grapplingHead;
+    public GameObject _grapplingHead;
 
     private void Awake()
     {
@@ -81,7 +83,6 @@ public class GrapplingScript : MonoBehaviour
             cam.transform.position = Vector3.Lerp(new Vector3(cam.transform.position.x, cam.transform.position.y, cam.transform.position.z),
             new Vector3(cam.transform.position.x, transform.position.y + 5f, transform.position.z - 18f), 2.2f * Time.deltaTime);
 
-
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 movementScript.enabled = true;
@@ -90,6 +91,13 @@ public class GrapplingScript : MonoBehaviour
                 movementScript.GrapplingJump();
             }
         }
+        else
+        {
+            grapplingButton.interactable = true;
+            trigger.enabled = true;
+            Destroy(_grapplingHead);
+        }
+
         //else
         //{
         //    player.GetComponent<MovementScript>().enabled = true; //WAS I FUCKING CRAZY???????? now the movementscript cannot be disabled lmao
@@ -162,8 +170,7 @@ public class GrapplingScript : MonoBehaviour
         }
         else
         {
-            //grapple
-            //Debug.Log(hit.point);
+            _grapplingHead = Instantiate(grapplingHead, hit.point, Quaternion.identity);
             isGrappling = true;
             _grapplingDir = grapplingDir;
             Destroy(_gizmoLine);

@@ -230,7 +230,6 @@ public class BossScript : MonoBehaviour
     IEnumerator Warning() //Warning Phase 2
     {
         Debug.Log("StartWarningCountDown");
-
         yield return new WaitForSeconds(waitingTimeForWarningSign);                             //time wait = time wait in spike Appear - waitingTimeForWarningSign4
         Debug.Log("StopBlinking");
         endFade = true;
