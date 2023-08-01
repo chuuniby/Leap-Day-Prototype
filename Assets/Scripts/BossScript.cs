@@ -181,6 +181,7 @@ public class BossScript : MonoBehaviour
                 transform.GetComponent<SpriteRenderer>().enabled = false;
                 //Play dead animation
                 //Go to next scene I guess
+                LevelSequencer.instance.unlockHDB = true;
                 break;
         }
     }

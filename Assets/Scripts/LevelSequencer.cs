@@ -10,6 +10,7 @@ public class LevelSequencer : MonoBehaviour
     public bool unlockTerraceHouseLevel;
     public bool unlockTerraceHouseLevel2;
     public bool unlockDockLevel2;
+    public bool unlockHDB;
     private void Awake()
     {
         if (instance != null)
@@ -27,6 +28,11 @@ public class LevelSequencer : MonoBehaviour
         {
             SceneManager.LoadScene("Docks 2");
             unlockDockLevel2 = false;
+        }
+        if(unlockHDB)
+        {
+            SceneManager.LoadScene("HDB");
+            unlockHDB = false;
         }
     }
 
