@@ -33,7 +33,6 @@ public class BossScript : MonoBehaviour
     public Color tmpColor;
     public Color tmpWarningColor;
 
-    public bool BossDescend;
     public bool startAttack;
     public bool startPattern;
     public bool dead = false;
@@ -45,10 +44,12 @@ public class BossScript : MonoBehaviour
     public bool laserDoDamage;
     public ParticleSystem.MainModule mainModule;
     public float timerBoss;
-    public float alpha;
     public bool startFade;
+    public bool endFade;
     public Color startColor;
     public Color endColor;
+    public bool loopSpikeFade;
+    public float speed;
     public enum BossPhase
     {
         Null,
@@ -72,6 +73,15 @@ public class BossScript : MonoBehaviour
 
     void Update()
     {
+        //if (loopSpikeFade)
+        //{
+        //    StopCoroutine(FadeIn());
+        //}
+        //else
+        //{
+        //    StopCoroutine(FadeIn());
+        //    StopCoroutine(FadeOut());
+        //}
 
         switch (currentPhase)
         {
@@ -122,13 +132,33 @@ public class BossScript : MonoBehaviour
                 finishPhase = false;
                 warningSign.SetActive(true);
                 spikeGroup.SetActive(true);
+                if (loopSpikeFade)
+                {
+                    startFade = true;
+                    loopSpikeFade = false;
+                }
+
+                if (startFade)
+                {
+                    StartCoroutine(FadeIn());
+                    startFade = false;
+                }
+                if (endFade)
+                {
+                    StopAllCoroutines();
+                    StartCoroutine(SpikeAppear());
+                    endFade = false;
+                }
 
                 if (startPattern)
                 {
                     StartCoroutine(SpikeFade());
+                    startPattern = false;
                 }
                 if (phase2Count == 0)
                 {
+                    warningSign.SetActive(false);
+                    spikeGroup.SetActive(false);
                     finishPhase = true;
                 }
                 //if (finishPhase) currentPhase = BossPhase.Phase3;     //Phase 3 no longer use
@@ -145,8 +175,6 @@ public class BossScript : MonoBehaviour
             //    //break;
             //    break;
             case BossPhase.Dead:
-                warningSign.SetActive(false);
-                spikeGroup.SetActive(false);
                 finishPhase = false;
                 dead = true;                //boss is dead what now lol
                 transform.GetComponent<SpriteRenderer>().enabled = false;
@@ -158,8 +186,12 @@ public class BossScript : MonoBehaviour
 
     IEnumerator SpikeFade() //Stop Attack Phase 2
     {
-        startFade = true;
-        StartCoroutine(FadeImage());
+        Color tmpColor = Sign.GetComponent<SpriteRenderer>().color;
+        float a = 1f;
+        tmpColor = new Color(tmpColor.r, tmpColor.g, tmpColor.b, a);
+        Debug.Log("StartOfSpikeFade");
+        loopSpikeFade = true;
+        Debug.Log("StartBlinking");
         if (spikeGroup.activeInHierarchy)
         {
             foreach (GameObject spike in spikes)
@@ -170,12 +202,13 @@ public class BossScript : MonoBehaviour
             }
             StartCoroutine(Warning());
             yield return new WaitForSeconds(3f);
-            StartCoroutine(SpikeAppear());
         }
     }
 
     IEnumerator SpikeAppear() //Start Attack Phase 2
     {
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log("Spike Do Damage");
         if (spikeGroup.activeInHierarchy)
         {
             foreach (GameObject spike in spikes)
@@ -185,18 +218,26 @@ public class BossScript : MonoBehaviour
                 spike.GetComponent<SpriteRenderer>().color = tmpColor;
                 spike.GetComponent<PolygonCollider2D>().enabled = true; //CHANGE THIS TO TRUE FOR REAL GAME SO THE SPIKE ACTUALLY DO DAMAGE
             }
-            phase2Count--;
             yield return new WaitForSeconds(3f);
+            phase2Count--;
+            Debug.Log("Phase2Count --");
             StartCoroutine(SpikeFade());
+            warningSign.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 1f);
         }
 
     }
 
     IEnumerator Warning() //Warning Phase 2
     {
-        yield return new WaitForSeconds(waitingTimeForWarningSign);                             //time wait = time wait in spike Appear - waitingTimeForWarningSign
-        warningSign.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f, 255f);
-        startPattern = false;
+        Debug.Log("StartWarningCountDown");
+
+        yield return new WaitForSeconds(waitingTimeForWarningSign);                             //time wait = time wait in spike Appear - waitingTimeForWarningSign4
+        Debug.Log("StopBlinking");
+        endFade = true;
+        Sign.GetComponent<SpriteRenderer>().color = new Color(1f,1f,1f,1f);
+        Debug.Log("ChangeTheWarningToWarningColour");
+        warningSign.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 0f);
+
     }
 
     IEnumerator LaserAppear() //Start Attack Phase 3
@@ -315,32 +356,33 @@ public class BossScript : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator FadeImage()
+    IEnumerator FadeIn()
     {
-        // fade from opaque to transparent
-        if (startFade)
+        while (Sign.GetComponent<SpriteRenderer>().color.a > 0)
         {
-            // loop over 1 second backwards
-            for (float i = 1; i >= 0; i -= Time.deltaTime)
-            {
-                // set color with i as alpha
-                Sign.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, i);
-                yield return null;
-            }
-            startFade = false;
+            // set color with i as alpha
+            Color tmpColor = Sign.GetComponent<SpriteRenderer>().color;
+            float fadeAmount = tmpColor.a - (speed * Time.deltaTime);
+            tmpColor = new Color(tmpColor.r, tmpColor.g, tmpColor.b, fadeAmount);
+            Sign.GetComponent<SpriteRenderer>().color = tmpColor;
+            yield return null;
         }
-        // fade from transparent to opaque
-        if(!startFade)
+        StartCoroutine(FadeOut());
+
+    }
+
+    IEnumerator FadeOut()
+    {
+        while (Sign.GetComponent<SpriteRenderer>().color.a < 1)
         {
-            // loop over 1 second
-            for (float i = 0; i <= 1; i += Time.deltaTime)
-            {
-                // set color with i as alpha
-                Sign.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, i);
-                yield return null;
-            }
-            startFade = true;
+            Color tmpColor = Sign.GetComponent<SpriteRenderer>().color;
+            float fadeAmount = tmpColor.a + (speed * Time.deltaTime);
+            tmpColor = new Color(tmpColor.r, tmpColor.g, tmpColor.b, fadeAmount);
+            Sign.GetComponent<SpriteRenderer>().color = tmpColor;
+            yield return null;
+
         }
+        StartCoroutine(FadeIn());
     }
 
 
