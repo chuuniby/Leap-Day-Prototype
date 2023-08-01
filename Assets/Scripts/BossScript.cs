@@ -50,6 +50,7 @@ public class BossScript : MonoBehaviour
     public Color endColor;
     public bool loopSpikeFade;
     public float speed;
+    public GameObject brightThingy;
     public enum BossPhase
     {
         Null,
@@ -222,7 +223,8 @@ public class BossScript : MonoBehaviour
             phase2Count--;
             Debug.Log("Phase2Count --");
             StartCoroutine(SpikeFade());
-            warningSign.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 1f);
+            //warningSign.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 1f);       //Warning sign back to normal
+            brightThingy.SetActive(false);
         }
 
     }
@@ -235,7 +237,9 @@ public class BossScript : MonoBehaviour
         endFade = true;
         Sign.GetComponent<SpriteRenderer>().color = new Color(1f,1f,1f,1f);
         Debug.Log("ChangeTheWarningToWarningColour");
-        warningSign.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 0f);
+        //warningSign.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, 0f);       //warning sign turn bright to caution player
+        brightThingy.SetActive(true);
+        warningSign.GetComponent<Shake>().StartCoroutine("Shaking");
 
     }
 

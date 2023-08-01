@@ -336,12 +336,12 @@ GameObject:
   - component: {fileID: 20082065}
   - component: {fileID: 20082067}
   m_Layer: 0
-  m_Name: Warning_BG_2
+  m_Name: Bright Thingy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &20082065
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -503,13 +503,14 @@ GameObject:
   m_Component:
   - component: {fileID: 21931820}
   - component: {fileID: 21931819}
+  - component: {fileID: 21931821}
   m_Layer: 0
   m_Name: Warning
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &21931819
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -579,6 +580,53 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &21931821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 21931818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c908bda3076248247a8a1334891bde4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 1.2
+  magnitude: 0
+  curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.6994278
+      outSlope: 3.6994278
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.13515604
+      value: 0.5
+      inSlope: -0.022039458
+      outSlope: -0.022039458
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.105649315
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -0.57813895
+      outSlope: -0.57813895
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &23144787
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2250,6 +2298,7 @@ MonoBehaviour:
   endColor: {r: 1, g: 1, b: 1, a: 0.5882353}
   loopSpikeFade: 0
   speed: 1
+  brightThingy: {fileID: 20082064}
 --- !u!95 &496072445
 Animator:
   serializedVersion: 5

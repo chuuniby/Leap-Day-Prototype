@@ -170,7 +170,7 @@ public class GrapplingScript : MonoBehaviour
         }
         else
         {
-            _grapplingHead = Instantiate(grapplingHead, hit.point, Quaternion.identity);
+            _grapplingHead = Instantiate(grapplingHead, hit.point, Quaternion.identity);    
             isGrappling = true;
             _grapplingDir = grapplingDir;
             Destroy(_gizmoLine);
